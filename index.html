@@ -253,7 +253,8 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .no-files{padding:20px;font-size:11px;color:var(--text3);text-align:center;line-height:1.6}
 
 /* badge colors */
-.bg-client{background:#DCFCE7;color:#166534}
+.spin{width:22px;height:22px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 .bg-candidat{background:#DBEAFE;color:#1D4ED8}
 .bg-mgmt{background:#F3E8FF;color:#7E22CE}
 .bg-agence{background:#FEF9C3;color:#854D0E}
@@ -554,20 +555,116 @@ const BASE_CATS=[
   {id:'autres',  name:'Autres',     color:'#475569', subcats:[]},
 ];
 
-let notes    = JSON.parse(localStorage.getItem('v6_notes')||'{}');
-let todos    = JSON.parse(localStorage.getItem('v6_todos')||'[]');
-let customCats=JSON.parse(localStorage.getItem('v6_cats') ||'[]');
-// Each cat: {id,name,color,subcats:[string]}
+// ── SUPABASE ──
+const SB_URL = 'https://rahnchvmfbyztxeoairy.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhaG5jaHZtZmJ5enR4ZW9haXJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwOTQ1NzcsImV4cCI6MjA5MTY3MDU3N30.FG74EHYWnB7-CxOq5Nd9wGf6wT909RPcjf9W-ZWTa_A';
+const USER_ID = 'pierre'; // identifiant fixe, à remplacer par auth plus tard
+
+async function sbFetch(path, opts={}){
+  const res = await fetch(SB_URL+'/rest/v1/'+path, {
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer '+SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer || '',
+      ...opts.headers
+    },
+    ...opts
+  });
+  if(!res.ok){ console.error('Supabase error', res.status, await res.text()); return null; }
+  const txt = await res.text();
+  return txt ? JSON.parse(txt) : null;
+}
+
+// ── STATE ──
+let notes     = {};
+let todos     = [];
+let customCats= [];
 
 let weekOff=0, selDay=new Date(Y,Mo,D), calView='week';
 let curEvtId=null, curType='', curAgence='', curSubcat='', curFiles=[], curTreated=false;
 let todoTab='todo', urgNew=false, plannedOpen=false;
 let treeFolder='all', searchQ='';
 
-function saveLS(){
-  localStorage.setItem('v6_notes',JSON.stringify(notes));
-  localStorage.setItem('v6_todos',JSON.stringify(todos));
-  localStorage.setItem('v6_cats', JSON.stringify(customCats));
+// ── LOAD FROM SUPABASE ──
+async function loadAll(){
+  showLoader(true);
+  try {
+    // Notes
+    const nData = await sbFetch(`agenda_notes?user_id=eq.${USER_ID}&order=ts.desc`);
+    if(nData) notes = Object.fromEntries(nData.map(n=>([n.id, {
+      title:n.title, type:n.type, agence:n.agence, subcat:n.subcat,
+      html:n.html, text:n.text_content, files:n.files||[],
+      treated:n.treated, libre:n.libre,
+      eventTitle:n.event_title, eventDate:n.event_date, ts:n.ts
+    }])));
+
+    // Todos
+    const tData = await sbFetch(`agenda_todos?user_id=eq.${USER_ID}&order=created_at.desc`);
+    if(tData) todos = tData.map(t=>({
+      id:t.id, text:t.text, urgent:t.urgent, done:t.done, dueDate:t.due_date
+    }));
+
+    // Categories
+    const cData = await sbFetch(`agenda_categories?user_id=eq.${USER_ID}`);
+    if(cData) customCats = cData.map(c=>({
+      id:c.id, name:c.name, color:c.color, subcats:c.subcats||[]
+    }));
+  } catch(e){ console.error('Load error', e); }
+  showLoader(false);
+  renderCalendar(); renderTodo(); renderTree();
+}
+
+function showLoader(on){
+  let el=document.getElementById('globalLoader');
+  if(!el){ el=document.createElement('div'); el.id='globalLoader';
+    el.style.cssText='position:fixed;inset:0;background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;z-index:999;font-size:13px;color:#616160';
+    el.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div class="spin"></div>Chargement…</div>';
+    document.body.appendChild(el);
+  }
+  el.style.display=on?'flex':'none';
+}
+
+// ── SAVE TO SUPABASE ──
+async function saveNote_sb(id, data){
+  await sbFetch('agenda_notes?on_conflict=id', {
+    method:'POST',
+    prefer:'resolution=merge-duplicates',
+    body: JSON.stringify({
+      id, user_id:USER_ID,
+      title:data.title, type:data.type, agence:data.agence, subcat:data.subcat,
+      html:data.html, text_content:data.text, files:data.files,
+      treated:data.treated, libre:data.libre,
+      event_title:data.eventTitle, event_date:data.eventDate||null,
+      ts:data.ts
+    })
+  });
+}
+async function deleteNote_sb(id){
+  await sbFetch(`agenda_notes?id=eq.${id}`, {method:'DELETE'});
+}
+async function saveTodo_sb(t){
+  await sbFetch('agenda_todos?on_conflict=id', {
+    method:'POST',
+    prefer:'resolution=merge-duplicates',
+    body: JSON.stringify({
+      id:t.id, user_id:USER_ID, text:t.text,
+      urgent:t.urgent, done:t.done, due_date:t.dueDate||null
+    })
+  });
+}
+async function deleteTodo_sb(id){
+  await sbFetch(`agenda_todos?id=eq.${id}`, {method:'DELETE'});
+}
+async function saveCat_sb(c){
+  await sbFetch('agenda_categories?on_conflict=id', {
+    method:'POST',
+    prefer:'resolution=merge-duplicates',
+    body: JSON.stringify({id:c.id, user_id:USER_ID, name:c.name, color:c.color, subcats:c.subcats})
+  });
+}
+async function deleteCat_sb(id){
+  await sbFetch(`agenda_categories?id=eq.${id}`, {method:'DELETE'});
 }
 function ft(h,m){return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');}
 function sd(a,b){return a&&b&&a.toDateString()===b.toDateString();}
@@ -740,16 +837,18 @@ function plannedItemHtml(t){
   </div>`;
 }
 
-function addTodo(){
+async function addTodo(){
   const txt=document.getElementById('todoTi').value.trim();if(!txt)return;
-  todos.unshift({id:Date.now().toString(36),text:txt,urgent:urgNew,done:false,dueDate:document.getElementById('todoDt').value||todayStr()});
+  const t={id:Date.now().toString(36),text:txt,urgent:urgNew,done:false,dueDate:document.getElementById('todoDt').value||todayStr()};
+  todos.unshift(t);
   document.getElementById('todoTi').value='';document.getElementById('todoDt').value=todayStr();
   urgNew=false;document.getElementById('urgPill').classList.remove('on');
-  saveLS();renderTodo();
+  renderTodo();
+  await saveTodo_sb(t);
 }
 function toggleUrg(){urgNew=!urgNew;document.getElementById('urgPill').classList.toggle('on',urgNew);}
-function toggleDone(id){const t=todos.find(x=>x.id===id);if(t)t.done=!t.done;saveLS();renderTodo();}
-function delTodo(id){todos=todos.filter(x=>x.id!==id);saveLS();renderTodo();}
+async function toggleDone(id){const t=todos.find(x=>x.id===id);if(t){t.done=!t.done;renderTodo();await saveTodo_sb(t);}}
+async function delTodo(id){todos=todos.filter(x=>x.id!==id);renderTodo();await deleteTodo_sb(id);}
 function setTodoTab(t,btn){todoTab=t;document.querySelectorAll('.todo-tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderTodo();}
 function togglePlanned(){
   plannedOpen=!plannedOpen;
@@ -861,27 +960,31 @@ function toggleTreated(){
   curTreated=!curTreated;
   const tc=document.getElementById('treatedCheck');tc.classList.toggle('on',curTreated);tc.querySelector('svg').style.display=curTreated?'block':'none';
 }
-function saveNote(){
+async function saveNote(){
   if(!curEvtId)return;
   const evt=getEvt(curEvtId);
   const html=document.getElementById('noteEditor').innerHTML.trim();
   const title=document.getElementById('mTitle').value.trim();
-  notes[curEvtId]={
+  const data={
     title:title||(evt?.title||'Note libre'),type:curType,agence:curAgence,subcat:curSubcat,html,
     text:document.getElementById('noteEditor').innerText.trim(),
     files:[...curFiles],treated:curTreated,
     eventTitle:evt?.title||'',eventDate:evt?.date?.toISOString()||'',
     libre:!evt,ts:new Date().toISOString()
   };
-  saveLS();
-  const btn=document.getElementById('mSaveBtn');btn.textContent='✓ Sauvegardé';btn.classList.add('saved');
+  notes[curEvtId]=data;
+  const btn=document.getElementById('mSaveBtn');btn.textContent='Enregistrement…';
+  await saveNote_sb(curEvtId, data);
+  btn.textContent='✓ Sauvegardé';btn.classList.add('saved');
   setTimeout(()=>{btn.textContent='Enregistrer';btn.classList.remove('saved');},2000);
   renderCalendar();renderTree();
 }
-function deleteNote(){
+async function deleteNote(){
   if(!curEvtId)return;
   if(!confirm('Supprimer cette note ?'))return;
-  delete notes[curEvtId];saveLS();closeModal();
+  delete notes[curEvtId];
+  await deleteNote_sb(curEvtId);
+  closeModal();
 }
 function renderDetail(evt){
   document.getElementById('mDetailContent').innerHTML=`
@@ -1047,42 +1150,47 @@ function renderCatBlocks(){
     </div>`;
   }).join('');
 }
-function addCat(){
+async function addCat(){
   const v=document.getElementById('newCatInput').value.trim();if(!v)return;
   const hues=[210,270,330,30,150,60,180,300];
   const color=`hsl(${hues[customCats.length%hues.length]},60%,40%)`;
-  customCats.push({id:'c_'+Date.now().toString(36),name:v,color,subcats:[]});
+  const c={id:'c_'+Date.now().toString(36),name:v,color,subcats:[]};
+  customCats.push(c);
   document.getElementById('newCatInput').value='';
-  saveLS();renderCatBlocks();renderTree();
+  renderCatBlocks();renderTree();
+  await saveCat_sb(c);
 }
-function delCat(id){customCats=customCats.filter(c=>c.id!==id);saveLS();renderCatBlocks();renderTree();}
-function addSubcat(catId){
+async function delCat(id){
+  customCats=customCats.filter(c=>c.id!==id);
+  renderCatBlocks();renderTree();
+  await deleteCat_sb(id);
+}
+async function addSubcat(catId){
   const input=document.getElementById('sub_'+catId);
   const v=input.value.trim();if(!v)return;
   const cat=customCats.find(c=>c.id===catId)||BASE_CATS.find(c=>c.id===catId);
   if(cat){if(!cat.subcats)cat.subcats=[];cat.subcats.push(v);}
   if(!customCats.find(c=>c.id===catId)){
-    // base cat — store subcat modification
     let bc=customCats.find(c=>c.id==='_base_'+catId);
     if(!bc){bc={id:'_base_'+catId,_baseRef:catId,subcats:[]};customCats.push(bc);}
     if(!bc.subcats)bc.subcats=[];bc.subcats.push(v);
-    // also update BASE_CATS subcats in memory
     const b=BASE_CATS.find(c=>c.id===catId);if(b){if(!b.subcats)b.subcats=[];b.subcats.push(v);}
-  }
-  input.value='';saveLS();renderCatBlocks();
+    await saveCat_sb(bc);
+  } else { await saveCat_sb(cat); }
+  input.value='';renderCatBlocks();
 }
-function delSubcat(catId,idx){
+async function delSubcat(catId,idx){
   const cat=customCats.find(c=>c.id===catId);
-  if(cat){cat.subcats.splice(idx,1);}
+  if(cat){cat.subcats.splice(idx,1);await saveCat_sb(cat);}
   else{const b=BASE_CATS.find(c=>c.id===catId);if(b)b.subcats.splice(idx,1);}
-  saveLS();renderCatBlocks();renderTree();
+  renderCatBlocks();renderTree();
 }
 function handleIcs(input){
   if(input.files[0])document.getElementById('icsStatus').textContent=`✓ "${input.files[0].name}" importé. Les vrais événements Outlook s'afficheront ici dans la version connectée.`;
 }
 
 // ── INIT ──
-renderCalendar();renderTodo();renderTree();
+loadAll();
 </script>
 </body>
 </html>
