@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda · Notes · ToDo</title>
+<title>Notes · ToDo</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -12,11 +12,11 @@
   --text:#1A1A18;--text2:#616160;--text3:#A8A8A4;
   --blue:#2563EB;--blue-bg:#EFF6FF;--blue-light:#DBEAFE;
   --red:#DC2626;--red-bg:#FEF2F2;--red-light:#FEE2E2;
-  --green:#16A34A;--green-bg:#F0FDF4;
-  --radius:10px;
+  --green:#16A34A;--radius:10px;
 }
 html,body{height:100%;overflow:hidden}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 .app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
 
 /* TOPBAR */
@@ -24,20 +24,21 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .tb-logo{font-size:13px;font-weight:500;display:flex;align-items:center;gap:7px;color:var(--text);padding-right:12px;border-right:1px solid var(--border)}
 .tb-logo svg{width:16px;height:16px;color:var(--blue)}
 .tb-r{display:flex;align-items:center;gap:6px;margin-left:auto}
-.settings-btn{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-family:inherit;font-size:11px;color:var(--text2);transition:all .1s}
-.settings-btn:hover{background:var(--blue-bg);color:var(--blue)}
-.settings-btn svg{width:14px;height:14px}
+.tb-btn{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-family:inherit;font-size:11px;color:var(--text2);transition:all .1s}
+.tb-btn:hover{background:var(--blue-bg);color:var(--blue)}
+.tb-btn svg{width:14px;height:14px}
 
 /* MAIN */
 .main{display:flex;flex:1;overflow:hidden;padding:12px;gap:12px;flex-direction:column}
 .top-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex-shrink:0}
-.bottom-row{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.bottom-row{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
 .card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
 .card-hd{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--border);flex-shrink:0}
-.card-hd-title{font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px}
+.card-hd-title{font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;cursor:pointer;transition:color .1s}
+.card-hd-title:hover{color:var(--blue)}
 .card-hd-title svg{width:13px;height:13px}
 
-/* ── CALENDAR ── */
+/* CALENDAR */
 .cal-view-toggle{display:flex;border:1px solid var(--border2);border-radius:6px;overflow:hidden}
 .cvt{padding:3px 9px;font-size:10px;font-family:inherit;border:none;background:transparent;cursor:pointer;color:var(--text2);transition:all .1s}
 .cvt.on{background:var(--blue);color:#fff}
@@ -54,23 +55,18 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .wd-dots{display:flex;gap:2px;margin-top:3px;min-height:5px}
 .dot{width:4px;height:4px;border-radius:50%;background:var(--blue-light)}
 .dot.noted{background:#F59E0B}
-/* DAY VIEW */
-.day-view-hd{padding:8px 13px;border-bottom:1px solid var(--border);font-size:12px;font-weight:500;flex-shrink:0;background:var(--blue-bg);color:var(--blue)}
 .day-slot{display:flex;align-items:stretch;min-height:38px;border-bottom:1px solid var(--border)}
 .day-slot:last-child{border-bottom:none}
 .slot-time{width:48px;font-size:9px;color:var(--text3);padding:6px 8px 0;flex-shrink:0;text-align:right}
-.slot-body{flex:1;padding:3px 6px;position:relative}
-.slot-evt{background:var(--blue-bg);border-left:2px solid var(--blue);border-radius:3px;padding:3px 7px;margin-bottom:2px;cursor:pointer;transition:filter .1s}
-.slot-evt:hover{filter:brightness(.93)}
+.slot-body{flex:1;padding:3px 6px}
+.slot-evt{background:var(--blue-bg);border-left:2px solid var(--blue);border-radius:3px;padding:3px 7px;margin-bottom:2px;cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:4px}
+.slot-evt:hover{filter:brightness(.95)}
 .slot-evt-name{font-size:11px;font-weight:500;color:var(--blue)}
 .slot-evt-time{font-size:9px;color:var(--text3)}
 .slot-evt.has-note{border-left-color:#F59E0B}
 .slot-evt.has-note .slot-evt-name{color:#92400E}
-/* Shared evt list */
 .evt-day-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:7px 13px 4px;border-bottom:1px solid var(--border);flex-shrink:0}
 .evt-scroll{overflow-y:auto;flex:1}
-.evt-scroll::-webkit-scrollbar{width:3px}
-.evt-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 .evt-row{display:flex;align-items:flex-start;gap:8px;padding:7px 13px;cursor:pointer;border-left:2px solid transparent;border-bottom:1px solid var(--border);transition:background .1s}
 .evt-row:last-child{border-bottom:none}
 .evt-row:hover{background:#FAFAFA}
@@ -81,8 +77,14 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .evt-flag{font-size:9px;color:#D97706;margin-top:2px}
 .no-evts{padding:12px 13px;font-size:11px;color:var(--text3)}
 .cal-hint{padding:5px 13px 6px;font-size:9px;color:var(--text3);font-style:italic;border-top:1px solid var(--border);flex-shrink:0}
+.new-evt-btn{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;border:1px solid var(--blue-light);background:var(--blue-bg);cursor:pointer;font-family:inherit;font-size:10px;color:var(--blue);white-space:nowrap;transition:all .1s}
+.new-evt-btn:hover{background:var(--blue);color:#fff}
+.new-evt-btn svg{width:11px;height:11px}
+.del-evt-btn{background:transparent;border:none;cursor:pointer;color:transparent;font-size:14px;padding:0 3px;line-height:1;flex-shrink:0;transition:color .1s}
+.evt-row:hover .del-evt-btn{color:var(--text3)}
+.del-evt-btn:hover{color:var(--red)!important}
 
-/* ── TODO ── */
+/* TODO */
 .todo-add-row{display:flex;align-items:center;gap:7px;padding:7px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
 .todo-input-wrap{flex:1;display:flex;align-items:center;gap:6px;background:#FAFAFA;border:1px solid var(--border);border-radius:6px;padding:4px 8px;transition:border-color .1s}
 .todo-input-wrap:focus-within{border-color:var(--blue)}
@@ -92,24 +94,23 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .urgent-pill{display:flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-size:10px;font-family:inherit;color:var(--text2);flex-shrink:0;transition:all .1s}
 .urgent-pill:hover,.urgent-pill.on{background:var(--red-bg);color:var(--red);border-color:#FCA5A5}
 .urgent-pill svg{width:11px;height:11px}
-.add-btn{width:26px;height:26px;border-radius:6px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .1s}
-.add-btn:hover{opacity:.85}
+.add-btn{width:26px;height:26px;border-radius:6px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .todo-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
 .todo-tab{flex:1;font-size:11px;padding:6px;text-align:center;border:none;background:transparent;cursor:pointer;font-family:inherit;color:var(--text2);border-bottom:2px solid transparent;transition:all .1s}
 .todo-tab.on{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
 .todo-list-wrap{flex:1;overflow-y:auto}
-.todo-list-wrap::-webkit-scrollbar{width:3px}
-.todo-list-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.todo-sec-hd{display:flex;align-items:center;gap:4px;padding:5px 13px 3px;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);border-bottom:1px solid var(--border)}
+.todo-sec-hd.urg{color:var(--red);background:#FFF5F5}
+.todo-sec-hd svg{width:11px;height:11px}
 .todo-item{display:flex;align-items:flex-start;gap:8px;padding:7px 13px;border-bottom:1px solid var(--border);transition:background .1s}
 .todo-item:last-child{border-bottom:none}
 .todo-item:hover{background:#FAFAFA}
 .todo-check{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s}
-.todo-check:hover{border-color:var(--blue)}
 .todo-check.urg{border-color:var(--red)}
 .todo-check.done{background:var(--green);border-color:var(--green)}
 .todo-check.done svg{width:9px;height:9px;color:#fff}
 .todo-body{flex:1;min-width:0}
-.todo-text{font-size:11px;color:var(--text);line-height:1.4;cursor:pointer}
+.todo-text{font-size:11px;color:var(--text);line-height:1.4}
 .todo-text.done{text-decoration:line-through;color:var(--text3)}
 .todo-text.urgent{color:var(--red);font-weight:500}
 .todo-date-lbl{font-size:9px;color:var(--text3);margin-top:2px;display:flex;align-items:center;gap:3px}
@@ -119,7 +120,6 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .todo-item:hover .todo-del{opacity:1}
 .todo-del:hover{color:var(--red)}
 .todo-empty{padding:14px 13px;font-size:11px;color:var(--text3);text-align:center}
-/* planned tasks link */
 .planned-link{display:flex;align-items:center;gap:5px;padding:7px 13px;font-size:11px;color:var(--blue);cursor:pointer;border-top:1px solid var(--border);background:transparent;border-bottom:none;font-family:inherit;transition:background .1s;flex-shrink:0}
 .planned-link:hover{background:var(--blue-bg)}
 .planned-link svg{width:12px;height:12px}
@@ -127,7 +127,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .planned-item{display:flex;align-items:flex-start;gap:8px;padding:6px 13px;border-bottom:1px solid var(--border);opacity:.65}
 .planned-item:last-child{border-bottom:none}
 
-/* ── NOTE MODAL ── */
+/* NOTE MODAL */
 .note-modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
 .note-modal.open{opacity:1;pointer-events:all}
 .note-modal-inner{background:var(--white);border-radius:var(--radius);width:100%;max-width:760px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;transform:translateY(10px);transition:transform .2s ease;box-shadow:0 20px 60px rgba(0,0,0,.25)}
@@ -141,18 +141,20 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .modal-tab{flex:1;padding:9px;font-size:11px;font-weight:500;text-align:center;border:none;background:transparent;cursor:pointer;font-family:inherit;color:var(--text2);border-bottom:2px solid transparent;transition:all .1s}
 .modal-tab.on{color:var(--blue);border-bottom-color:var(--blue)}
 .modal-body{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
-.modal-body::-webkit-scrollbar{width:4px}
-.modal-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-.detail-row{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--text2);padding:4px 0}
-.detail-row svg{width:14px;height:14px;flex-shrink:0;margin-top:1px;color:var(--text3)}
-.att-chip{display:inline-flex;align-items:center;gap:4px;background:var(--blue-bg);color:var(--blue);border-radius:12px;padding:2px 8px;font-size:10px;margin:2px 2px 0 0}
-.att-av{width:16px;height:16px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600}
 .sec-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
 .divider{height:1px;background:var(--border);margin:2px 0}
 .title-wrap{display:flex;align-items:center;gap:7px;padding:6px 9px;background:#FAFAFA;border:1px solid var(--border);border-radius:6px}
+.title-wrap:focus-within{border-color:var(--blue)}
 .title-wrap svg{width:12px;height:12px;color:var(--text3);flex-shrink:0}
 .title-input{flex:1;background:transparent;border:none;outline:none;font-size:11px;font-weight:500;color:var(--text);font-family:inherit}
 .title-input::placeholder{color:var(--text3);font-weight:400}
+.evt-block{background:#FAFAFA;border:1px solid var(--border);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
+.evt-field-row{display:flex;align-items:center;gap:8px}
+.evt-field-row svg{width:13px;height:13px;color:var(--blue);flex-shrink:0}
+.evt-field{flex:1;background:var(--white);border:1px solid var(--border);border-radius:6px;padding:5px 9px;font-family:inherit;font-size:11px;color:var(--text);outline:none;transition:border-color .1s}
+.evt-field:focus{border-color:var(--blue)}
+.evt-field::placeholder{color:var(--text3)}
+.evt-times{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;padding-left:21px}
 .pills-row{display:flex;gap:5px;flex-wrap:wrap}
 .pill{display:flex;align-items:center;gap:4px;font-size:10px;padding:4px 10px;border-radius:20px;border:1px solid var(--border2);color:var(--text2);cursor:pointer;background:transparent;font-family:inherit;transition:all .1s;white-space:nowrap}
 .pill:hover{border-color:var(--text3);color:var(--text)}
@@ -163,7 +165,6 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .pill.on-autres{background:#F1F5F9;color:#475569;border-color:#CBD5E1;font-weight:500}
 .pill.on-lemans{background:#FEF3C7;color:#92400E;border-color:#FCD34D;font-weight:500}
 .pill.on-niort{background:#FCE7F3;color:#9D174D;border-color:#F9A8D4;font-weight:500}
-/* dynamic custom pill */
 .pill.on-custom{font-weight:500}
 .rich-toolbar{display:flex;gap:3px;padding:5px 8px;background:#FAFAFA;border:1px solid var(--border);border-radius:6px 6px 0 0;border-bottom:none;flex-wrap:wrap;align-items:center}
 .rt-btn{width:26px;height:26px;border-radius:4px;border:none;background:transparent;cursor:pointer;font-family:inherit;font-size:11px;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:background .1s}
@@ -177,6 +178,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .treated-check{width:15px;height:15px;border-radius:3px;border:1.5px solid var(--border2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s}
 .treated-check.on{background:var(--green);border-color:var(--green)}
 .treated-check svg{width:9px;height:9px;color:#fff;display:none}
+.treated-check.on svg{display:block}
 .treated-lbl{font-size:11px;color:var(--text2)}
 .pj-chips{display:flex;flex-wrap:wrap;gap:5px}
 .pj-chip{display:flex;align-items:center;gap:5px;padding:3px 8px;background:#F5F5F5;border:1px solid var(--border);border-radius:5px;font-size:10px;color:var(--text2)}
@@ -186,110 +188,62 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .pj-add{display:flex;align-items:center;gap:5px;padding:4px 10px;border:1px dashed var(--border2);border-radius:5px;background:transparent;cursor:pointer;font-family:inherit;font-size:10px;color:var(--blue);transition:all .1s}
 .pj-add:hover{background:var(--blue-bg)}
 .pj-add svg{width:12px;height:12px}
+.detail-row{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--text2);padding:4px 0}
+.detail-row svg{width:14px;height:14px;flex-shrink:0;margin-top:1px;color:var(--text3)}
 .modal-footer{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0;background:var(--white)}
 .btn-save{flex:1;padding:8px;background:var(--blue);color:#fff;border:none;border-radius:6px;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;transition:opacity .1s}
 .btn-save:hover{opacity:.88}
 .btn-save.saved{background:var(--green)}
-.btn-sec{padding:8px 12px;background:transparent;border:1px solid var(--border2);border-radius:6px;font-family:inherit;font-size:12px;color:var(--text3);cursor:pointer;transition:all .1s}
+.btn-del{padding:8px 12px;background:transparent;border:1px solid #FCA5A5;border-radius:6px;font-family:inherit;font-size:12px;color:var(--red);cursor:pointer;transition:all .1s}
+.btn-del:hover{background:var(--red-bg)}
+.btn-sec{padding:8px 12px;background:transparent;border:1px solid var(--border2);border-radius:6px;font-family:inherit;font-size:12px;color:var(--text3);cursor:pointer}
 .btn-sec:hover{border-color:#FDA4AF;color:var(--red)}
 
-/* ── FILE TREE ── */
-.tree-card{flex:1;overflow:hidden;display:flex;flex-direction:column}
+/* FILE TREE */
+.tree-card{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
 .tree-hd{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--border);flex-shrink:0;gap:10px}
 .tree-hd-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
-.tree-hd-title{font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.tree-hd-title{font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;flex-shrink:0;cursor:pointer;transition:color .1s}
+.tree-hd-title:hover{color:var(--blue)}
 .tree-hd-title svg{width:14px;height:14px;color:var(--text2)}
-/* SEARCH BAR */
-.search-wrap{flex:1;max-width:300px;display:flex;align-items:center;gap:6px;background:#FAFAFA;border:1px solid var(--border);border-radius:6px;padding:4px 9px;transition:border-color .1s}
+.search-wrap{flex:1;max-width:280px;display:flex;align-items:center;gap:6px;background:#FAFAFA;border:1px solid var(--border);border-radius:6px;padding:4px 9px;transition:border-color .1s}
 .search-wrap:focus-within{border-color:var(--blue)}
 .search-wrap svg{width:13px;height:13px;color:var(--text3);flex-shrink:0}
 .search-input{flex:1;background:transparent;border:none;outline:none;font-family:inherit;font-size:11px;color:var(--text)}
 .search-input::placeholder{color:var(--text3)}
 .search-clear{background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:13px;line-height:1;padding:0 2px}
-.search-clear:hover{color:var(--text)}
-.tree-actions{display:flex;gap:6px;flex-shrink:0}
+.tree-actions{display:flex;gap:6px;flex-shrink:0;align-items:center}
 .tree-btn{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-family:inherit;font-size:11px;color:var(--text2);transition:all .1s;white-space:nowrap}
 .tree-btn:hover{background:var(--bg)}
 .tree-btn svg{width:13px;height:13px}
 .tree-btn.primary{background:var(--blue);color:#fff;border-color:transparent}
 .tree-btn.primary:hover{opacity:.88}
-.tree-layout{display:grid;grid-template-columns:190px 1fr;flex:1;overflow:hidden}
+.sort-sel{font-size:10px;padding:3px 8px;border:1px solid var(--border2);border-radius:6px;background:transparent;font-family:inherit;color:var(--text2);outline:none;cursor:pointer}
+.tree-layout{display:grid;grid-template-columns:190px 1fr;flex:1;overflow:hidden;min-height:0}
 .tree-sb{border-right:1px solid var(--border);padding:8px 0;overflow-y:auto}
-.tree-sb::-webkit-scrollbar{width:0}
 .sf-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:5px 13px 3px}
 .sf-item{display:flex;align-items:center;gap:7px;padding:5px 13px;cursor:pointer;font-size:11px;color:var(--text2);border-left:2px solid transparent;transition:all .1s}
 .sf-item:hover{background:var(--bg);color:var(--text)}
 .sf-item.act{border-left-color:var(--blue);background:var(--blue-bg);color:#1D4ED8;font-weight:500}
 .sf-item svg{width:14px;height:14px;flex-shrink:0}
 .sf-count{margin-left:auto;font-size:9px;color:var(--text3)}
-.sf-div{height:1px;background:var(--border);margin:6px 0}
-/* sub-category indent */
-.sf-item.sub{padding-left:26px;font-size:10px}
-.sf-item.sub svg{width:12px;height:12px}
-.tree-content{overflow-y:auto;padding:12px}
-.tree-content::-webkit-scrollbar{width:4px}
-.tree-content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.sf-div{height:1px;background:var(--border);margin:5px 0}
+.sf-sub{padding-left:26px;font-size:10px}
+.tree-content{overflow-y:auto;padding:10px}
 .tc-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .tc-title{font-size:11px;font-weight:500}
-.search-results-lbl{font-size:10px;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:5px}
-.search-highlight{background:#FEF9C3;border-radius:2px;padding:0 1px}
-.file-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+.file-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px}
 .file-card{padding:10px 11px;border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .12s;animation:fadeIn .15s ease}
 .file-card:hover{border-color:var(--border2);box-shadow:0 1px 6px rgba(0,0,0,.06)}
 .file-card.act{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue-bg)}
 .file-card.treated{opacity:.5;background:#FAFAFA}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── EXPAND / FULLSCREEN PANELS ── */
-.section-title-btn{cursor:pointer;display:flex;align-items:center;gap:6px;transition:color .15s}
-.section-title-btn:hover{color:var(--blue)}
-.section-title-btn .expand-ic{width:14px;height:14px;color:var(--text3);transition:color .15s;opacity:0}
-.section-title-btn:hover .expand-ic{opacity:1;color:var(--blue)}
-
-.fullscreen-panel{position:fixed;inset:0;background:var(--white);z-index:500;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .18s}
-.fullscreen-panel.open{opacity:1;pointer-events:all}
-.fp-hd{height:50px;background:var(--blue);color:#fff;display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
-.fp-hd-title{font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px;flex:1}
-.fp-close{background:rgba(255,255,255,.2);border:none;cursor:pointer;color:#fff;font-size:13px;padding:5px 12px;border-radius:6px;font-family:inherit;transition:background .1s}
-.fp-close:hover{background:rgba(255,255,255,.35)}
-.fp-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
-
-/* ── CAL TODAY TODOS ── */
-.cal-today-todos{border-top:1px solid var(--border);padding:6px 13px;flex-shrink:0;background:#FAFAFA}
-.cal-today-todos-hd{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;display:flex;align-items:center;gap:5px}
-.cal-today-todos-hd svg{width:11px;height:11px}
-.cal-todo-chip{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:10px;color:var(--text2)}
-.cal-todo-chip.urg{color:var(--red);font-weight:500}
-.cal-todo-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);flex-shrink:0}
-.cal-todo-dot.urg{background:var(--red)}
-.cal-todo-dot.done{background:var(--green)}
-.no-cal-todos{font-size:10px;color:var(--text3);font-style:italic}
-
-/* ── NEW EVENT+NOTE BUTTON ── */
-.cal-new-evt-btn{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;border:1px solid var(--blue);background:var(--blue-bg);cursor:pointer;font-family:inherit;font-size:11px;color:var(--blue);transition:all .1s;white-space:nowrap}
-.cal-new-evt-btn:hover{background:var(--blue);color:#fff}
-.cal-new-evt-btn svg{width:12px;height:12px}
-
-/* ── EVT+NOTE QUICK MODAL ── */
-.evt-note-modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
-.evt-note-modal.open{opacity:1;pointer-events:all}
-.evt-note-inner{background:var(--white);border-radius:var(--radius);width:100%;max-width:520px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25);transform:translateY(8px);transition:transform .2s}
-.evt-note-modal.open .evt-note-inner{transform:translateY(0)}
-.evt-note-hd{background:var(--blue);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
-.evt-note-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
-.evt-field-row{display:flex;flex-direction:column;gap:3px}
-.evt-field-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
-.evt-field-inp{padding:6px 9px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:11px;color:var(--text);outline:none;transition:border-color .1s;width:100%}
-.evt-field-inp:focus{border-color:var(--blue)}
-.evt-times-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.evt-note-footer{display:flex;gap:8px;padding:10px 16px;border-top:1px solid var(--border)}
-
 @keyframes fadeIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
 .fc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px}
-.fc-icon{width:16px;height:16px}
+.fc-icon{width:15px;height:15px}
 .fc-badges{display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end}
 .fc-badge{font-size:8px;padding:1px 5px;border-radius:8px;font-weight:500;text-transform:uppercase}
-.fc-title{font-size:11px;font-weight:500;color:var(--text);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fc-title{font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fc-sub{font-size:9px;color:var(--text3);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fc-preview{font-size:10px;color:var(--text2);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .fc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
@@ -297,8 +251,8 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .fc-treated{font-size:9px;color:var(--green);display:flex;align-items:center;gap:2px}
 .fc-treated svg{width:10px;height:10px}
 .no-files{padding:20px;font-size:11px;color:var(--text3);text-align:center;line-height:1.6}
-
-/* badge colors */
+.search-results-lbl{font-size:10px;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.search-highlight{background:#FEF9C3;border-radius:2px}
 .bg-client{background:#DCFCE7;color:#166534}
 .bg-candidat{background:#DBEAFE;color:#1D4ED8}
 .bg-mgmt{background:#F3E8FF;color:#7E22CE}
@@ -308,149 +262,150 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .bg-niort{background:#FCE7F3;color:#9D174D}
 .bg-libre{background:#FAF5FF;color:#7C3AED}
 
-/* ── SETTINGS MODAL ── */
+/* SETTINGS */
 .settings-modal{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .18s}
 .settings-modal.open{opacity:1;pointer-events:all}
-.settings-inner{background:var(--white);border-radius:var(--radius);width:100%;max-width:520px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2);transform:translateY(8px);transition:transform .18s}
+.settings-inner{background:var(--white);border-radius:var(--radius);width:100%;max-width:500px;max-height:82vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2);transform:translateY(8px);transition:transform .18s}
 .settings-modal.open .settings-inner{transform:translateY(0)}
-.settings-hd{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.settings-hd{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .settings-hd h2{font-size:14px;font-weight:500}
-.settings-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:20px}
-.settings-body::-webkit-scrollbar{width:4px}
-.settings-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-.settings-section h3{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:10px}
-.ics-zone{border:1.5px dashed var(--border2);border-radius:8px;padding:14px;text-align:center;cursor:pointer;transition:all .15s}
-.ics-zone:hover{border-color:var(--blue);background:var(--blue-bg)}
-.ics-zone p{font-size:11px;color:var(--text2);margin-top:4px}
-.ics-zone small{font-size:10px;color:var(--text3)}
-/* cat management */
+.settings-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:18px}
+.st-sec h3{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:10px}
+.ics-drop{border:1.5px dashed var(--border2);border-radius:8px;padding:14px;text-align:center;cursor:pointer;transition:all .15s}
+.ics-drop:hover{border-color:var(--blue);background:var(--blue-bg)}
+.ics-drop p{font-size:11px;color:var(--text2);margin-top:4px}
+.ics-drop small{font-size:10px;color:var(--text3)}
 .cat-block{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:8px}
 .cat-block-hd{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#FAFAFA;border-bottom:1px solid var(--border)}
-.cat-block-name{font-size:12px;font-weight:500;flex:1}
+.cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.cat-block-name{flex:1;font-size:12px;font-weight:500}
 .cat-block-del{background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:14px;line-height:1}
 .cat-block-del:hover{color:var(--red)}
-.cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .subcat-list{padding:4px 0}
 .subcat-item{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 28px;font-size:11px;color:var(--text2)}
-.subcat-del{background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:12px;line-height:1;margin-left:auto}
+.subcat-del{background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:13px;line-height:1;margin-left:auto}
 .subcat-del:hover{color:var(--red)}
-.add-subcat-row{display:flex;gap:5px;padding:4px 12px 8px 28px}
-.add-subcat-input{flex:1;padding:4px 8px;border:1px solid var(--border);border-radius:5px;font-family:inherit;font-size:10px;outline:none}
-.add-subcat-btn{padding:4px 9px;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-light);border-radius:5px;cursor:pointer;font-family:inherit;font-size:10px}
+.add-subcat-row{display:flex;gap:6px;padding:4px 12px 8px 28px}
+.add-subcat-input{flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:5px;font-family:inherit;font-size:10px;outline:none}
+.add-subcat-input:focus{border-color:var(--blue)}
+.add-subcat-btn{padding:5px 10px;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-light);border-radius:5px;cursor:pointer;font-family:inherit;font-size:10px}
 .add-cat-row{display:flex;gap:6px;margin-top:4px}
-.add-cat-input{flex:1;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:11px;outline:none;transition:border-color .1s}
+.add-cat-input{flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:11px;outline:none}
 .add-cat-input:focus{border-color:var(--blue)}
-.add-cat-btn{padding:6px 12px;background:var(--blue);color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px}
+.add-cat-btn{padding:7px 12px;background:var(--blue);color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px}
+
+/* LOADER */
+.loader{position:fixed;inset:0;background:rgba(242,242,240,.85);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:10px;font-size:12px;color:var(--text2)}
+.loader-spin{width:24px;height:24px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
 </style>
 </head>
 <body>
 <div class="app">
-
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="tb-logo">
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2.5" width="14" height="12" rx="1.5"/><path d="M1 6.5h14M5 1v3M11 1v3"/></svg>
-    Agenda · Notes
-  </div>
-  <div class="tb-r">
-    <button class="settings-btn" onclick="openSettings()">
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="2"/><path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M3 3l1 1M10 10l1 1M11 3l-1 1M4 10l-1 1"/></svg>
-      Paramètres
-    </button>
-  </div>
-</div>
-
-<div class="main">
-  <div class="top-row">
-
-    <!-- CALENDRIER -->
-    <div class="card" style="max-height:320px">
-      <div class="card-hd">
-        <div class="card-hd-title section-title-btn" onclick="openFullscreen('cal')" title="Vue détaillée" style="color:var(--text)">
-          <svg viewBox="0 0 14 14" fill="none" stroke="var(--blue)" stroke-width="1.5"><rect x="1" y="2" width="12" height="11" rx="1.5"/><path d="M1 5.5h12M4.5 1v2M9.5 1v2"/></svg>
-          <span id="calLabel">—</span>
-          <svg class="expand-ic" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 9V13h4M13 5V1H9M1 1l5 5M13 13l-5-5"/></svg>
-        </div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <div class="cal-view-toggle">
-            <button class="cvt on" id="btnWeek" onclick="setCalView('week')">Semaine</button>
-            <button class="cvt" id="btnDay" onclick="setCalView('day')">Jour</button>
-          </div>
-          <button class="cal-new-evt-btn" onclick="openEvtNoteModal()">
-            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 1v12M1 7h12"/></svg>
-            Évén. + Note
-          </button>
-          <button style="font-size:10px;padding:3px 7px;border-radius:6px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-family:inherit;color:var(--text2)" onclick="goToday()">Auj.</button>
-          <button style="width:22px;height:22px;border-radius:4px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-size:12px;color:var(--text2);display:flex;align-items:center;justify-content:center" onclick="calPrev()">‹</button>
-          <button style="width:22px;height:22px;border-radius:4px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-size:12px;color:var(--text2);display:flex;align-items:center;justify-content:center" onclick="calNext()">›</button>
-        </div>
-      </div>
-      <div id="calBody" style="display:flex;flex-direction:column;flex:1;overflow:hidden"></div>
-      <div class="cal-hint">Cliquer sur un événement pour ouvrir la note</div>
-      <div class="cal-today-todos" id="calTodayTodos"></div>
+  <div class="topbar">
+    <div class="tb-logo">
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="16" height="16" rx="3"/><path d="M5 6h8M5 9h8M5 12h5"/></svg>
+      Notes · ToDo
     </div>
-
-    <!-- TODO -->
-    <div class="card" style="max-height:320px">
-      <div class="card-hd">
-        <div class="card-hd-title section-title-btn" onclick="openFullscreen('todo')" title="Vue détaillée">
-          <svg viewBox="0 0 14 14" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M1 3h12M1 7h8M1 11h6"/><circle cx="12" cy="11" r="2"/><path d="M12 9.5V11"/></svg>
-          Ma ToDo
-          <svg class="expand-ic" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 9V13h4M13 5V1H9M1 1l5 5M13 13l-5-5"/></svg>
-        </div>
-        <span id="urgBadge" style="display:none;font-size:9px;background:var(--red-light);color:var(--red);padding:2px 7px;border-radius:10px;font-weight:500"></span>
-      </div>
-      <div class="todo-add-row">
-        <div class="todo-input-wrap">
-          <input class="todo-ti" id="todoTi" placeholder="Nouvelle tâche…" onkeydown="if(event.key==='Enter')addTodo()">
-          <input class="todo-date-input" type="date" id="todoDt">
-        </div>
-        <button class="urgent-pill" id="urgPill" onclick="toggleUrg()">
-          <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5.5" cy="5.5" r="4.5"/><path d="M5.5 3v2.5M5.5 8v.5"/></svg>
-          Urgent
-        </button>
-        <button class="add-btn" onclick="addTodo()">+</button>
-      </div>
-      <div class="todo-tabs">
-        <button class="todo-tab on" data-t="todo" onclick="setTodoTab('todo',this)">À faire</button>
-        <button class="todo-tab" data-t="done" onclick="setTodoTab('done',this)">Fait</button>
-      </div>
-      <div class="todo-list-wrap" id="todoListWrap"></div>
-      <button class="planned-link" id="plannedBtn" onclick="togglePlanned()">
-        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1.5" width="10" height="9" rx="1"/><path d="M1 4.5h10M3.5 1v2M8.5 1v2"/></svg>
-        <span id="plannedBtnTxt">Voir tâches planifiées (<span id="plannedCount">0</span>)</span>
+    <div class="tb-r">
+      <button class="tb-btn" onclick="openSettings()">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="2"/><path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M3 3l1 1M10 10l1 1M11 3l-1 1M4 10l-1 1"/></svg>
+        Paramètres
       </button>
-      <div id="plannedSection" style="display:none" class="planned-section"></div>
     </div>
   </div>
 
-  <!-- NOTES -->
-  <div class="bottom-row">
-    <div class="tree-card card">
-      <div class="tree-hd">
-        <div class="tree-hd-left">
-          <div class="tree-hd-title section-title-btn" onclick="openFullscreen('notes')" title="Vue détaillée">
-            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3a1 1 0 011-1h3l2 2h5a1 1 0 011 1v6a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/></svg>
-            Mes notes
-            <svg class="expand-ic" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 9V13h4M13 5V1H9M1 1l5 5M13 13l-5-5"/></svg>
+  <div class="main">
+    <div class="top-row">
+      <!-- CALENDRIER -->
+      <div class="card" style="max-height:320px">
+        <div class="card-hd">
+          <div class="card-hd-title" style="color:var(--text)">
+            <svg viewBox="0 0 14 14" fill="none" stroke="var(--blue)" stroke-width="1.5"><rect x="1" y="2" width="12" height="11" rx="1.5"/><path d="M1 5.5h12M4.5 1v2M9.5 1v2"/></svg>
+            <span id="calLabel">—</span>
           </div>
-          <div class="search-wrap">
-            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="4.5"/><path d="M9.5 9.5L13 13"/></svg>
-            <input class="search-input" id="searchInput" placeholder="Rechercher dans les notes…" oninput="onSearch()">
-            <button class="search-clear" id="searchClear" style="display:none" onclick="clearSearch()">✕</button>
+          <div style="display:flex;gap:6px;align-items:center">
+            <button class="new-evt-btn" onclick="openEvtModal()">
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 1v12M1 7h12"/></svg>
+              Nouvel événement
+            </button>
+            <div class="cal-view-toggle">
+              <button class="cvt on" id="btnWeek" onclick="setCalView('week')">Semaine</button>
+              <button class="cvt" id="btnDay" onclick="setCalView('day')">Jour</button>
+            </div>
+            <button style="font-size:10px;padding:3px 7px;border-radius:6px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-family:inherit;color:var(--text2)" onclick="goToday()">Auj.</button>
+            <button style="width:22px;height:22px;border-radius:4px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-size:12px;color:var(--text2);display:flex;align-items:center;justify-content:center" onclick="calPrev()">‹</button>
+            <button style="width:22px;height:22px;border-radius:4px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-size:12px;color:var(--text2);display:flex;align-items:center;justify-content:center" onclick="calNext()">›</button>
           </div>
         </div>
-        <div class="tree-actions">
-          <select id="noteSortSel" onchange="renderTree()" style="font-size:10px;padding:3px 8px;border:1px solid var(--border2);border-radius:6px;background:transparent;font-family:inherit;color:var(--text2);outline:none;cursor:pointer"><option value="date_desc">Date récente ↓</option><option value="date_asc">Date ancienne ↑</option><option value="alpha">A → Z</option><option value="treated">Non traitées en premier</option></select>
-          <button class="tree-btn primary" onclick="newFreeNote()">
-            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="11" height="11" rx="1.5"/><path d="M4 6.5h5M6.5 4v5"/></svg>
-            Note libre
-          </button>
-        </div>
+        <div id="calBody" style="display:flex;flex-direction:column;flex:1;overflow:hidden"></div>
+        <div class="cal-hint">Cliquer sur un événement pour ouvrir/créer sa note · × pour supprimer</div>
       </div>
-      <div class="tree-layout">
-        <div class="tree-sb" id="treeSb"></div>
-        <div class="tree-content" id="treeContent"></div>
+
+      <!-- TODO -->
+      <div class="card" style="max-height:320px">
+        <div class="card-hd">
+          <div class="card-hd-title">
+            <svg viewBox="0 0 14 14" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M1 3h12M1 7h8M1 11h6"/><circle cx="12" cy="11" r="2"/><path d="M12 9.5V11"/></svg>
+            Ma ToDo
+          </div>
+          <span id="urgBadge" style="display:none;font-size:9px;background:var(--red-light);color:var(--red);padding:2px 7px;border-radius:10px;font-weight:500"></span>
+        </div>
+        <div class="todo-add-row">
+          <div class="todo-input-wrap">
+            <input class="todo-ti" id="todoTi" placeholder="Nouvelle tâche…" onkeydown="if(event.key==='Enter')addTodo()">
+            <input class="todo-date-input" type="date" id="todoDt">
+          </div>
+          <button class="urgent-pill" id="urgPill" onclick="toggleUrg()">
+            <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5.5" cy="5.5" r="4.5"/><path d="M5.5 3v2.5M5.5 8v.5"/></svg>
+            Urgent
+          </button>
+          <button class="add-btn" onclick="addTodo()">+</button>
+        </div>
+        <div class="todo-tabs">
+          <button class="todo-tab on" onclick="setTodoTab('todo',this)">À faire</button>
+          <button class="todo-tab" onclick="setTodoTab('done',this)">Fait</button>
+        </div>
+        <div class="todo-list-wrap" id="todoListWrap"></div>
+        <button class="planned-link" id="plannedBtn" style="display:none" onclick="togglePlanned()">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1.5" width="10" height="9" rx="1"/><path d="M1 4.5h10M3.5 1v2M8.5 1v2"/></svg>
+          <span id="plannedTxt"></span>
+        </button>
+        <div id="plannedSection" style="display:none" class="planned-section"></div>
+      </div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="bottom-row">
+      <div class="tree-card card">
+        <div class="tree-hd">
+          <div class="tree-hd-left">
+            <div class="tree-hd-title">
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3a1 1 0 011-1h3l2 2h5a1 1 0 011 1v6a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/></svg>
+              Mes notes
+            </div>
+            <div class="search-wrap">
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="4.5"/><path d="M9.5 9.5L13 13"/></svg>
+              <input class="search-input" id="searchInput" placeholder="Rechercher dans les notes…" oninput="onSearch()">
+              <button class="search-clear" id="searchClear" style="display:none" onclick="clearSearch()">✕</button>
+            </div>
+          </div>
+          <div class="tree-actions">
+            <select class="sort-sel" id="sortSel" onchange="renderTree()">
+              <option value="date_desc">Date récente ↓</option>
+              <option value="date_asc">Date ancienne ↑</option>
+              <option value="alpha">A → Z</option>
+              <option value="treated">Non traitées d'abord</option>
+            </select>
+            <button class="tree-btn primary" onclick="openNoteModal(null)">
+              <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="11" height="11" rx="1.5"/><path d="M4 6.5h5M6.5 4v5"/></svg>
+              Note libre
+            </button>
+          </div>
+        </div>
+        <div class="tree-layout">
+          <div class="tree-sb" id="treeSb"></div>
+          <div class="tree-content" id="treeContent"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -461,24 +416,43 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
   <div class="note-modal-inner">
     <div class="modal-hd">
       <div style="flex:1;min-width:0">
-        <div class="modal-ev-name" id="mEvtName"></div>
-        <div class="modal-ev-meta" id="mEvtMeta"></div>
+        <div class="modal-ev-name" id="mEvtName">—</div>
+        <div class="modal-ev-meta" id="mEvtMeta">—</div>
       </div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-tabs" id="modalTabs">
       <button class="modal-tab on" onclick="setModalTab('note',this)">Ma note</button>
-      <button class="modal-tab" id="detailTabBtn" onclick="setModalTab('detail',this)">Détail événement</button>
+      <button class="modal-tab" id="detailTabBtn" style="display:none" onclick="setModalTab('detail',this)">Détail événement</button>
     </div>
     <div class="modal-body" id="mNoteTab">
       <div>
         <div class="sec-lbl">Titre</div>
         <div class="title-wrap">
           <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 10L8 2l2 2-7 7H1v-1z"/></svg>
-          <input class="title-input" id="mTitle" type="text" placeholder="Titre de la note…">
+          <input class="title-input" id="mTitle" placeholder="Titre de la note…">
         </div>
       </div>
       <div class="divider"></div>
+      <div id="mEvtSection">
+        <div class="sec-lbl">Événement lié</div>
+        <div class="evt-block">
+          <div class="evt-field-row">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="12" height="11" rx="1.5"/><path d="M1 5.5h12M4.5 1v2M9.5 1v2"/></svg>
+            <input class="evt-field" id="mEvtNameInp" placeholder="Nom de la réunion…">
+          </div>
+          <div class="evt-times">
+            <input class="evt-field" type="date" id="mEvtDate">
+            <input class="evt-field" type="time" id="mEvtStart">
+            <input class="evt-field" type="time" id="mEvtEnd">
+          </div>
+          <div class="evt-field-row">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12c0-2.5 2.5-4.5 6-4.5s6 2 6 4.5M7 7a3 3 0 100-6 3 3 0 000 6z"/></svg>
+            <input class="evt-field" id="mEvtOrg" placeholder="Organisateur (optionnel)">
+          </div>
+        </div>
+        <div class="divider"></div>
+      </div>
       <div>
         <div class="sec-lbl">Catégorie</div>
         <div class="pills-row" id="mTypePills"></div>
@@ -491,20 +465,20 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
           <button class="pill" data-v="niort" onclick="togglePill('agence',this)">Niort</button>
         </div>
       </div>
-      <div class="divider"></div>
-      <div>
-        <div class="sec-lbl" style="margin-bottom:0">Sous-catégorie</div>
-        <div class="pills-row" id="mSubcatPills" style="margin-top:5px"></div>
+      <div id="mSubcatSec" style="display:none">
+        <div class="divider"></div>
+        <div>
+          <div class="sec-lbl">Sous-catégorie</div>
+          <div class="pills-row" id="mSubcatPills"></div>
+        </div>
       </div>
       <div class="divider"></div>
       <div>
         <div class="sec-lbl">Note</div>
         <div class="rich-toolbar">
           <select class="rt-size" onchange="execCmd('fontSize',this.value)">
-            <option value="2">Petit</option>
-            <option value="3" selected>Normal</option>
-            <option value="4">Grand</option>
-            <option value="5">Très grand</option>
+            <option value="2">Petit</option><option value="3" selected>Normal</option>
+            <option value="4">Grand</option><option value="5">Très grand</option>
           </select>
           <div class="rt-sep"></div>
           <button class="rt-btn" onclick="execCmd('bold')"><b>B</b></button>
@@ -512,12 +486,12 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
           <button class="rt-btn" onclick="execCmd('underline')"><u>S</u></button>
           <div class="rt-sep"></div>
           <input type="color" class="rt-color" value="#1A1A18" title="Couleur texte" oninput="execCmd('foreColor',this.value)">
-          <input type="color" class="rt-color" value="#FFFFFF" title="Couleur fond" oninput="execCmd('hiliteColor',this.value)">
+          <input type="color" class="rt-color" value="#FFFFFF" title="Surbrillance" oninput="execCmd('hiliteColor',this.value)">
           <div class="rt-sep"></div>
           <button class="rt-btn" onclick="execCmd('insertUnorderedList')">
-            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="2.5" cy="4" r="1"/><circle cx="2.5" cy="7" r="1"/><circle cx="2.5" cy="10" r="1"/><path d="M5.5 4h7M5.5 7h7M5.5 10h7"/></svg>
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="2" cy="3.5" r=".75"/><circle cx="2" cy="6" r=".75"/><circle cx="2" cy="8.5" r=".75"/><path d="M4 3.5h7M4 6h7M4 8.5h7"/></svg>
           </button>
-          <button class="rt-btn" title="Effacer formatage" onclick="execCmd('removeFormat')">✕</button>
+          <button class="rt-btn" onclick="execCmd('removeFormat')" style="margin-left:auto;color:var(--text3);font-size:10px" title="Effacer formatage">✕</button>
         </div>
         <div class="note-editor" id="noteEditor" contenteditable="true" spellcheck="true"></div>
       </div>
@@ -533,19 +507,22 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
         </div>
       </div>
       <div class="treated-row" onclick="toggleTreated()">
-        <div class="treated-check" id="treatedCheck"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4.5l2.5 2.5L8 1.5"/></svg></div>
+        <div class="treated-check" id="treatedCheck">
+          <svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4.5l2.5 2.5L8 1.5"/></svg>
+        </div>
         <span class="treated-lbl">Marquer comme traitée</span>
       </div>
     </div>
     <div class="modal-body" id="mDetailTab" style="display:none"><div id="mDetailContent"></div></div>
     <div class="modal-footer">
+      <button class="btn-del" onclick="deleteCurrentNote()">Supprimer</button>
+      <button class="btn-sec" onclick="closeModal()">Annuler</button>
       <button class="btn-save" id="mSaveBtn" onclick="saveNote()">Enregistrer</button>
-      <button class="btn-sec" onclick="deleteNote()">Supprimer</button>
     </div>
   </div>
 </div>
 
-<!-- SETTINGS MODAL -->
+<!-- SETTINGS -->
 <div class="settings-modal" id="settingsModal">
   <div class="settings-inner">
     <div class="settings-hd">
@@ -553,21 +530,21 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
       <button onclick="closeSettings()" style="background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:17px;line-height:1">✕</button>
     </div>
     <div class="settings-body">
-      <div class="settings-section">
-        <h3>Importer un calendrier</h3>
-        <div class="ics-zone" onclick="document.getElementById('icsInput').click()">
+      <div class="st-sec">
+        <h3>Importer un calendrier .ics</h3>
+        <div class="ics-drop" onclick="document.getElementById('icsInput').click()">
           <svg viewBox="0 0 20 20" fill="none" stroke="var(--blue)" stroke-width="1.5" style="width:28px;height:28px;margin:0 auto"><path d="M10 2v10M6 8l4 4 4-4M3 14v2a1 1 0 001 1h12a1 1 0 001-1v-2"/></svg>
           <p>Glisser un fichier .ics ou cliquer</p>
-          <small>Outlook → Fichier → Importer/Exporter → Exporter vers un fichier → .ics</small>
+          <small>Outlook → Fichier → Importer/Exporter → .ics</small>
         </div>
         <input type="file" id="icsInput" accept=".ics" style="display:none" onchange="handleIcs(this)">
         <div id="icsStatus" style="margin-top:8px;font-size:11px;color:var(--green)"></div>
       </div>
-      <div class="settings-section">
+      <div class="st-sec">
         <h3>Catégories & sous-catégories</h3>
         <div id="catBlocks"></div>
         <div class="add-cat-row">
-          <input class="add-cat-input" id="newCatInput" placeholder="Nouvelle catégorie principale…" onkeydown="if(event.key==='Enter')addCat()">
+          <input class="add-cat-input" id="newCatInput" placeholder="Nouvelle catégorie…" onkeydown="if(event.key==='Enter')addCat()">
           <button class="add-cat-btn" onclick="addCat()">Ajouter</button>
         </div>
       </div>
@@ -576,939 +553,472 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 </div>
 
 <script>
-// ── CONSTANTS & STATE ──
+// ── SUPABASE ──
+const SB='https://rahnchvmfbyztxeoairy.supabase.co';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhaG5jaHZtZmJ5enR4ZW9haXJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwOTQ1NzcsImV4cCI6MjA5MTY3MDU3N30.FG74EHYWnB7-CxOq5Nd9wGf6wT909RPcjf9W-ZWTa_A';
+const UID='pierre';
+
+async function sbQ(path,opts={}){
+  try{
+    const r=await fetch(SB+'/rest/v1/'+path,{
+      method:opts.method||'GET',
+      headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':opts.prefer||'',...(opts.headers||{})},
+      body:opts.body
+    });
+    if(!r.ok){const err=await r.text();console.error('Supabase error',r.status,path,err);return null;}
+    const t=await r.text();return t?JSON.parse(t):null;
+  }catch(e){console.error(e);return null;}
+}
+
+// ── STATE ──
 const NOW=new Date(),Y=NOW.getFullYear(),Mo=NOW.getMonth(),D=NOW.getDate();
 const DAYS=['lun','mar','mer','jeu','ven','sam','dim'];
 const MS=['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
-const ECOLORS=['#2563EB','#16A34A','#DC2626','#7C3AED','#CA8A04','#0891B2','#DB2777'];
-
-// Events loaded from Supabase
-let EVENTS=[];
-function evtDateObj(e){
-  // e.event_date is 'YYYY-MM-DD'
-  if(!e.event_date)return new Date();
-  const[y,m,d]=e.event_date.split('-').map(Number);
-  return new Date(y,m-1,d);
-}
-
-// Base categories (immutable) + custom (editable)
+const COLORS=['#2563EB','#16A34A','#DC2626','#7C3AED','#CA8A04','#0891B2','#DB2777'];
 const BASE_CATS=[
-  {id:'client',  name:'Client',     color:'#16A34A', subcats:[]},
-  {id:'candidat',name:'Candidat',   color:'#1D4ED8', subcats:[]},
+  {id:'client',name:'Client',color:'#16A34A',subcats:[]},
+  {id:'candidat',name:'Candidat',color:'#1D4ED8',subcats:[]},
   {id:'management',name:'Management',color:'#7E22CE',subcats:[]},
-  {id:'agence',  name:'Agence',     color:'#854D0E', subcats:[]},
-  {id:'autres',  name:'Autres',     color:'#475569', subcats:[]},
+  {id:'agence',name:'Agence',color:'#854D0E',subcats:[]},
+  {id:'autres',name:'Autres',color:'#475569',subcats:[]}
 ];
 
+let notes={},todos=[],customCats=[],events=[];
+let weekOff=0,selDay=new Date(Y,Mo,D),calView='week';
+let curNoteId=null,curType='',curAgence='',curSubcat='',curFiles=[],curTreated=false,curIsEvt=false;
+let todoTab='todo',urgNew=false,plannedOpen=false;
+let treeFolder='all',searchQ='';
 
-const SB_URL='https://rahnchvmfbyztxeoairy.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhaG5jaHZtZmJ5enR4ZW9haXJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwOTQ1NzcsImV4cCI6MjA5MTY3MDU3N30.FG74EHYWnB7-CxOq5Nd9wGf6wT909RPcjf9W-ZWTa_A';
-const UID='pierre';
-async function sbF(path,opts={}){
-  try{const r=await fetch(SB_URL+'/rest/v1/'+path,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':opts.prefer||'',...(opts.headers||{})},body:opts.body,method:opts.method||'GET'});
-  if(!r.ok){console.warn('SB',r.status);return null;}const t=await r.text();return t?JSON.parse(t):null;}
-  catch(e){console.error(e);return null;}}
-async function sbUN(id,d){await sbF('agenda_notes?on_conflict=id',{method:'POST',prefer:'resolution=merge-duplicates',body:JSON.stringify({id,user_id:UID,title:d.title,type:d.type,agence:d.agence,subcat:d.subcat,html:d.html,text_content:d.text,files:d.files,treated:d.treated,libre:d.libre,event_title:d.eventTitle||'',event_date:d.eventDate||null,evt_start:d.evtStart||null,evt_end:d.evtEnd||null,evt_org:d.evtOrg||'',ts:d.ts})});}
-async function sbDN(id){await sbF(`agenda_notes?id=eq.${id}`,{method:'DELETE'});}
-async function sbUT(t){await sbF('agenda_todos?on_conflict=id',{method:'POST',prefer:'resolution=merge-duplicates',body:JSON.stringify({id:t.id,user_id:UID,text:t.text,urgent:t.urgent,done:t.done,due_date:t.dueDate||null})});}
-async function sbDT(id){await sbF(`agenda_todos?id=eq.${id}`,{method:'DELETE'});}
-async function sbUC(c){await sbF('agenda_categories?on_conflict=id',{method:'POST',prefer:'resolution=merge-duplicates',body:JSON.stringify({id:c.id,user_id:UID,name:c.name,color:c.color,subcats:c.subcats})});}
-async function sbDC(id){await sbF(`agenda_categories?id=eq.${id}`,{method:'DELETE'});}
-async function sbUE(e){await sbF('agenda_events?on_conflict=id',{method:'POST',prefer:'resolution=merge-duplicates',body:JSON.stringify({id:e.id,user_id:UID,title:e.title,org:e.org||'',event_date:e.event_date,sh:e.sh,sm:e.sm,eh:e.eh,em:e.em,color:e.color||'#2563EB'})});}
-async function sbDE(id){await sbF(`agenda_events?id=eq.${id}`,{method:'DELETE'});}
-function showLoader(on){let l=document.getElementById('ldr');if(!l){l=document.createElement('div');l.id='ldr';l.style.cssText='position:fixed;inset:0;background:rgba(242,242,240,.85);display:flex;align-items:center;justify-content:center;z-index:999;font-size:12px;color:#616160;flex-direction:column;gap:8px';l.innerHTML='<div style="width:22px;height:22px;border:2px solid #C4C4C0;border-top-color:#2563EB;border-radius:50%;animation:spin .7s linear infinite"></div>Chargement…';document.body.appendChild(l);}l.style.display=on?'flex':'none';}
-async function loadAll(){
-  showLoader(true);
-  const[nD,tD,cD,eD]=await Promise.all([
-    sbF(`agenda_notes?user_id=eq.${UID}&order=ts.desc&select=id,title,type,agence,subcat,html,text_content,files,treated,libre,event_title,event_date,evt_start,evt_end,evt_org,ts`),
-    sbF(`agenda_todos?user_id=eq.${UID}&order=created_at.desc`),
-    sbF(`agenda_categories?user_id=eq.${UID}`),
-    sbF(`agenda_events?user_id=eq.${UID}&order=event_date.asc`)
-  ]);
-  if(nD)notes=Object.fromEntries(nD.map(n=>[n.id,{title:n.title,type:n.type,agence:n.agence||'',subcat:n.subcat||'',html:n.html||'',text:n.text_content||'',files:n.files||[],treated:!!n.treated,libre:!!n.libre,eventTitle:n.event_title||'',eventDate:n.event_date||'',evtStart:n.evt_start||'',evtEnd:n.evt_end||'',evtOrg:n.evt_org||'',ts:n.ts||new Date().toISOString()}]));
-  if(tD)todos=tD.map(t=>({id:t.id,text:t.text,urgent:t.urgent,done:t.done,dueDate:t.due_date}));
-  if(cD)customCats=cD.map(c=>({id:c.id,name:c.name,color:c.color,subcats:c.subcats||[]}));
-  if(eD)EVENTS=eD.map(e=>({
-    id:e.id,title:e.title,org:e.org||'',
-    date:evtDateObj(e),
-    event_date:e.event_date,
-    sh:e.sh||0,sm:e.sm||0,eh:e.eh||0,em:e.em||0,
-    color:e.color||'#2563EB',loc:'',att:[]
-  }));
-  showLoader(false);renderCalendar();renderTodo();renderTree();renderCalTodayTodos();
-}
-let notes={},todos=[],customCats=[];
-
-let weekOff=0, selDay=new Date(Y,Mo,D), calView='week';
-let curEvtId=null, curType='', curAgence='', curSubcat='', curFiles=[], curTreated=false;
-let todoTab='todo', urgNew=false, plannedOpen=false;
-let treeFolder='all', searchQ='';
-
-function saveLS(){} // data saved to Supabase individually
-function ft(h,m){return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');}
-function sd(a,b){return a&&b&&a.toDateString()===b.toDateString();}
-function evtsFor(d){
-  const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  return EVENTS.filter(e=>e.event_date===ds||sd(e.date,d));
-}
-function getEvt(id){return EVENTS.find(e=>e.id===id);}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function ft(h,m){return String(h||0).padStart(2,'0')+':'+String(m||0).padStart(2,'0');}
+function sd(a,b){return a&&b&&a.toDateString()===b.toDateString();}
 function todayStr(){return NOW.toISOString().split('T')[0];}
+function dateFromStr(s){if(!s)return null;const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
 function allCats(){return[...BASE_CATS,...customCats];}
 function catById(id){return allCats().find(c=>c.id===id);}
-function badgeClass(id){
-  const map={client:'bg-client',candidat:'bg-candidat',management:'bg-mgmt',agence:'bg-agence',autres:'bg-autres',lemans:'bg-lemans',niort:'bg-niort',libre:'bg-libre'};
-  return map[id]||'bg-autres';
-}
+function evtsFor(d){const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;return events.filter(e=>e.event_date===ds);}
 
 document.getElementById('todoDt').value=todayStr();
 
+// ── LOADER ──
+function showLoader(on){
+  let l=document.getElementById('_ldr');
+  if(!l){l=document.createElement('div');l.id='_ldr';l.className='loader';l.innerHTML='<div class="loader-spin"></div>Chargement…';document.body.appendChild(l);}
+  l.style.display=on?'flex':'none';
+}
+
+// ── LOAD ALL ──
+async function loadAll(){
+  showLoader(true);
+  const[nD,tD,cD,eD]=await Promise.all([
+    sbQ(`agenda_notes?user_id=eq.${UID}&order=ts.desc&select=*`),
+    sbQ(`agenda_todos?user_id=eq.${UID}&order=created_at.desc`),
+    sbQ(`agenda_categories?user_id=eq.${UID}`),
+    sbQ(`agenda_events?user_id=eq.${UID}&order=event_date.asc`)
+  ]);
+  if(nD)notes=Object.fromEntries(nD.map(n=>[n.id,{
+    title:n.title||'',type:n.type||'',agence:n.agence||'',subcat:n.subcat||'',
+    html:n.html||'',text:n.text_content||'',files:n.files||[],
+    treated:!!n.treated,libre:!!n.libre,
+    evtName:n.event_title||'',evtDate:n.event_date||'',
+    evtStart:n.evt_start||'',evtEnd:n.evt_end||'',evtOrg:n.evt_org||'',
+    ts:n.ts||new Date().toISOString()
+  }]));
+  if(tD)todos=tD.map(t=>({id:t.id,text:t.text||'',urgent:!!t.urgent,done:!!t.done,dueDate:t.due_date||''}));
+  if(cD)customCats=cD.map(c=>({id:c.id,name:c.name,color:c.color,subcats:c.subcats||[]}));
+  if(eD)events=eD.map(e=>({...e,event_date:e.event_date||''}));
+  showLoader(false);
+  renderAll();
+}
+
+function renderAll(){renderCalendar();renderTodo();renderTree();}
+
+// ── SUPABASE SAVES ──
+async function saveNoteToSB(id,d){
+  await sbQ('agenda_notes',{method:'POST',prefer:'resolution=merge-duplicates,return=minimal',headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({
+    id,user_id:UID,title:d.title,type:d.type,agence:d.agence,subcat:d.subcat,
+    html:d.html,text_content:d.text,files:d.files,treated:d.treated,libre:d.libre,
+    event_title:d.evtName||'',event_date:d.evtDate||null,
+    evt_start:d.evtStart||null,evt_end:d.evtEnd||null,evt_org:d.evtOrg||'',ts:d.ts
+  })});
+}
+async function delNoteSB(id){await sbQ(`agenda_notes?id=eq.${id}`,{method:'DELETE'});}
+async function saveTodoSB(t){await sbQ('agenda_todos',{method:'POST',prefer:'resolution=merge-duplicates,return=minimal',headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({id:t.id,user_id:UID,text:t.text,urgent:t.urgent,done:t.done,due_date:t.dueDate||null})});}
+async function delTodoSB(id){await sbQ(`agenda_todos?id=eq.${id}`,{method:'DELETE'});}
+async function saveEvtSB(e){await sbQ('agenda_events',{method:'POST',prefer:'resolution=merge-duplicates,return=minimal',headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({id:e.id,user_id:UID,title:e.title,org:e.org||'',event_date:e.event_date,sh:e.sh||0,sm:e.sm||0,eh:e.eh||0,em:e.em||0,color:e.color||'#2563EB'})});}
+async function delEvtSB(id){await sbQ(`agenda_events?id=eq.${id}`,{method:'DELETE'});}
+async function saveCatSB(c){await sbQ('agenda_categories',{method:'POST',prefer:'resolution=merge-duplicates,return=minimal',headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({id:c.id,user_id:UID,name:c.name,color:c.color,subcats:c.subcats})});}
+async function delCatSB(id){await sbQ(`agenda_categories?id=eq.${id}`,{method:'DELETE'});}
+
 // ── CALENDAR ──
-function setCalView(v){
-  calView=v;
-  document.getElementById('btnWeek').classList.toggle('on',v==='week');
-  document.getElementById('btnDay').classList.toggle('on',v==='day');
-  renderCalendar();
-}
-function weekStart(off){
-  const d=new Date(Y,Mo,D);let dow=d.getDay();dow=dow===0?6:dow-1;
-  d.setDate(d.getDate()-dow+off*7);return d;
-}
+function setCalView(v){calView=v;document.getElementById('btnWeek').classList.toggle('on',v==='week');document.getElementById('btnDay').classList.toggle('on',v==='day');renderCalendar();}
+function weekStart(off){const d=new Date(Y,Mo,D);let dow=d.getDay();dow=dow===0?6:dow-1;d.setDate(d.getDate()-dow+off*7);return d;}
 function calPrev(){if(calView==='week')weekOff--;else selDay=new Date(selDay.getFullYear(),selDay.getMonth(),selDay.getDate()-1);renderCalendar();}
 function calNext(){if(calView==='week')weekOff++;else selDay=new Date(selDay.getFullYear(),selDay.getMonth(),selDay.getDate()+1);renderCalendar();}
 function goToday(){weekOff=0;selDay=new Date(Y,Mo,D);renderCalendar();}
-
-function renderCalendar(){
-  if(calView==='week') renderWeekView();
-  else renderDayView();
-}
+function renderCalendar(){if(calView==='week')renderWeekView();else renderDayView();}
 
 function renderWeekView(){
   const ws=weekStart(weekOff),we=new Date(ws);we.setDate(ws.getDate()+6);
-  const lbl=ws.getMonth()===we.getMonth()
-    ?`${ws.getDate()} – ${we.getDate()} ${MS[ws.getMonth()]} ${ws.getFullYear()}`
-    :`${ws.getDate()} ${MS[ws.getMonth()]} – ${we.getDate()} ${MS[we.getMonth()]}`;
+  const lbl=ws.getMonth()===we.getMonth()?`${ws.getDate()} – ${we.getDate()} ${MS[ws.getMonth()]} ${ws.getFullYear()}`:`${ws.getDate()} ${MS[ws.getMonth()]} – ${we.getDate()} ${MS[we.getMonth()]}`;
   document.getElementById('calLabel').textContent=lbl;
-
-  const body=document.getElementById('calBody');
-  body.innerHTML='';
-
-  // Week strip
-  const strip=document.createElement('div');
-  strip.className='week-strip';
+  const body=document.getElementById('calBody');body.innerHTML='';
+  const strip=document.createElement('div');strip.className='week-strip';
   for(let i=0;i<7;i++){
     const d=new Date(ws);d.setDate(ws.getDate()+i);
     const evts=evtsFor(d),isT=sd(d,NOW),isSel=sd(d,selDay),isWe=i>=5;
-    const c=document.createElement('div');
-    c.className='wday'+(isSel?' sel':'')+(isT&&!isSel?' today':'')+(isWe?' we':'');
-    c.innerHTML=`<div class="wd-name">${DAYS[i]}</div><div class="wd-num">${d.getDate()}</div><div class="wd-dots">${evts.slice(0,3).map(e=>`<div class="dot${notes[e.id]?' noted':''}"></div>`).join('')}</div>`;
-    if(!isWe)c.onclick=()=>{selDay=d;renderCalendar();};
-    strip.appendChild(c);
+    const cell=document.createElement('div');
+    cell.className='wday'+(isSel?' sel':'')+(isT&&!isSel?' today':'')+(isWe?' we':'');
+    cell.innerHTML=`<div class="wd-name">${DAYS[i]}</div><div class="wd-num">${d.getDate()}</div><div class="wd-dots">${evts.slice(0,3).map(e=>`<div class="dot${notes[e.id]?' noted':''}"></div>`).join('')}</div>`;
+    if(!isWe)cell.onclick=()=>{selDay=d;renderCalendar();};
+    strip.appendChild(cell);
   }
   body.appendChild(strip);
-
-  // Event label + list
-  const lbl2=document.createElement('div');lbl2.className='evt-day-lbl';
   const evts=evtsFor(selDay);
+  const lbl2=document.createElement('div');lbl2.className='evt-day-lbl';
   lbl2.textContent=selDay.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+' · '+evts.length+' événement'+(evts.length!==1?'s':'');
   body.appendChild(lbl2);
   const scroll=document.createElement('div');scroll.className='evt-scroll';
-  if(!evts.length)scroll.innerHTML='<div class="no-evts">Aucun événement ce jour</div>';
-  else scroll.innerHTML=evts.map(e=>evtRowHtml(e)).join('');
+  scroll.innerHTML=evts.length?evts.map(e=>evtRowHtml(e)).join(''):'<div class="no-evts">Aucun événement — cliquez sur "Nouvel événement" pour en créer un</div>';
   body.appendChild(scroll);
 }
 
 function renderDayView(){
   const lbl=selDay.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   document.getElementById('calLabel').textContent=lbl;
-  const body=document.getElementById('calBody');
-  body.innerHTML='';
-
-  const evts=evtsFor(selDay).sort((a,b)=>a.sh*60+a.sm-(b.sh*60+b.sm));
-  const slots=[];
-  for(let h=8;h<=19;h++) slots.push(h);
-
-  const wrapper=document.createElement('div');
-  wrapper.style.cssText='flex:1;overflow-y:auto';
-  wrapper.innerHTML=slots.map(h=>{
-    const slotEvts=evts.filter(e=>e.sh===h);
-    return`<div class="day-slot">
-      <div class="slot-time">${ft(h,0)}</div>
-      <div class="slot-body">${slotEvts.map(e=>`
-        <div class="slot-evt${notes[e.id]?' has-note':''}" style="display:flex;align-items:flex-start;justify-content:space-between">
-          <div style="flex:1;cursor:pointer" onclick="openModal('${e.id}')"><div class="slot-evt-name">${esc(e.title)}</div><div class="slot-evt-time">${ft(e.sh,e.sm)}–${ft(e.eh,e.em)} · ${esc(e.org)}</div></div>
-          <button onclick="event.stopPropagation();deleteEvent('${e.id}')" style="background:transparent;border:none;cursor:pointer;color:rgba(37,99,235,.4);font-size:14px;padding:0 2px;line-height:1;flex-shrink:0" onmouseenter="this.style.color='var(--red)'" onmouseleave="this.style.color='rgba(37,99,235,.4)'" title="Supprimer">×</button>
-        </div>`).join('')}
-      </div>
-    </div>`;
+  const body=document.getElementById('calBody');body.innerHTML='';
+  const evts=evtsFor(selDay).sort((a,b)=>(a.sh||0)*60+(a.sm||0)-((b.sh||0)*60+(b.sm||0)));
+  const w=document.createElement('div');w.style.cssText='flex:1;overflow-y:auto';
+  w.innerHTML=Array.from({length:12},(v,i)=>i+8).map(h=>{
+    const slotEvts=evts.filter(e=>(e.sh||0)===h);
+    return`<div class="day-slot"><div class="slot-time">${ft(h,0)}</div><div class="slot-body">${slotEvts.map(e=>`
+      <div class="slot-evt${notes[e.id]?' has-note':''}">
+        <div style="flex:1;cursor:pointer" onclick="openNoteModal('${e.id}')"><div class="slot-evt-name">${esc(e.title)}</div><div class="slot-evt-time">${ft(e.sh,e.sm)}–${ft(e.eh,e.em)}${e.org?' · '+esc(e.org):''}</div></div>
+        <button onclick="deleteEvt('${e.id}')" style="background:transparent;border:none;cursor:pointer;color:rgba(37,99,235,.3);font-size:14px;padding:0 3px;line-height:1" onmouseenter="this.style.color='var(--red)'" onmouseleave="this.style.color='rgba(37,99,235,.3)'">×</button>
+      </div>`).join('')}</div></div>`;
   }).join('');
-  body.appendChild(wrapper);
+  body.appendChild(w);
 }
 
 function evtRowHtml(e){
   const n=notes[e.id];
   const flags=[];if(n?.type)flags.push(n.type);if(n?.agence)flags.push(n.agence==='lemans'?'Le Mans':'Niort');
-  return`<div class="evt-row${e.id===curEvtId?' active':''}" style="position:relative">
-    <div class="evt-col" style="background:${e.color}" onclick="openModal('${e.id}')"></div>
-    <div style="flex:1;cursor:pointer" onclick="openModal('${e.id}')"><div class="evt-name">${esc(e.title)}</div><div class="evt-meta">${ft(e.sh,e.sm)} – ${ft(e.eh,e.em)}${e.org?' · '+esc(e.org):''}</div>${flags.length?`<div class="evt-flag">📝 ${flags.join(' · ')}</div>`:''}</div>
-    <button onclick="event.stopPropagation();deleteEvent('${e.id}')" style="background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:2px 6px;opacity:0;transition:opacity .1s;flex-shrink:0" onmouseenter="this.style.opacity=1;this.style.color='var(--red)'" onmouseleave="this.style.opacity=0;this.style.color='var(--text3)'" title="Supprimer cet événement">×</button>
+  return`<div class="evt-row${e.id===curNoteId?' active':''}">
+    <div class="evt-col" style="background:${e.color||'#2563EB'};cursor:pointer" onclick="openNoteModal('${e.id}')"></div>
+    <div style="flex:1;cursor:pointer" onclick="openNoteModal('${e.id}')">
+      <div class="evt-name">${esc(e.title)}</div>
+      <div class="evt-meta">${ft(e.sh,e.sm)} – ${ft(e.eh,e.em)}${e.org?' · '+esc(e.org):''}</div>
+      ${flags.length?`<div class="evt-flag">📝 ${flags.join(' · ')}</div>`:''}
+    </div>
+    <button class="del-evt-btn" onclick="deleteEvt('${e.id}')" title="Supprimer">×</button>
   </div>`;
 }
-async function deleteEvent(id){
-  if(!confirm('Supprimer cet événement ? La note associée sera aussi supprimée.'))return;
-  EVENTS=EVENTS.filter(e=>e.id!==id);
-  await sbDE(id);
-  if(notes[id]){delete notes[id];await sbDN(id);}
-  if(curEvtId===id)closeModal();
-  renderCalendar();renderTree();renderCalTodayTodos();
+
+// Open modal for event note or free note
+function openNoteModal(evtId){
+  const evt=evtId?events.find(e=>e.id===evtId):null;
+  const n=evtId?notes[evtId]:null;
+  curNoteId=evtId||('free_'+Date.now().toString(36));
+  curIsEvt=!!evtId;
+  curType=n?.type||'';curAgence=n?.agence||'';curSubcat=n?.subcat||'';
+  curFiles=n?.files?[...n.files]:[];curTreated=n?.treated||false;
+
+  document.getElementById('mEvtName').textContent=evt?evt.title:(n?.evtName||'Note libre');
+  document.getElementById('mEvtMeta').textContent=evt?`${ft(evt.sh,evt.sm)} – ${ft(evt.eh,evt.em)}${evt.org?' · '+evt.org:''}`:n?.evtName?'Note liée à un événement':'Note libre';
+  document.getElementById('mTitle').value=n?.title||evt?.title||'';
+  document.getElementById('noteEditor').innerHTML=n?.html||'';
+
+  // Event section
+  const evtSec=document.getElementById('mEvtSection');
+  if(curIsEvt||n?.evtName){
+    evtSec.style.display='block';
+    document.getElementById('mEvtNameInp').value=n?.evtName||evt?.title||'';
+    document.getElementById('mEvtDate').value=n?.evtDate||evt?.event_date||todayStr();
+    document.getElementById('mEvtStart').value=n?.evtStart||ft(evt?.sh||0,evt?.sm||0)||'';
+    document.getElementById('mEvtEnd').value=n?.evtEnd||ft(evt?.eh||0,evt?.em||0)||'';
+    document.getElementById('mEvtOrg').value=n?.evtOrg||evt?.org||'';
+    document.getElementById('detailTabBtn').style.display=evt?'block':'none';
+    if(evt)renderEvtDetail(evt);
+  } else {
+    evtSec.style.display='none';
+    document.getElementById('detailTabBtn').style.display='none';
+  }
+
+  buildTypePills();buildSubcatPills();renderPJ();
+  const tc=document.getElementById('treatedCheck');tc.classList.toggle('on',curTreated);
+  setModalTab('note',document.querySelector('.modal-tab'));
+  const btn=document.getElementById('mSaveBtn');btn.textContent='Enregistrer';btn.classList.remove('saved');
+  document.getElementById('noteModal').classList.add('open');
+  setTimeout(()=>document.getElementById('noteEditor').focus(),200);
+}
+
+function openEvtModal(){
+  // Open note modal for a new event
+  const id='e_'+Date.now().toString(36);
+  const ds=selDay?`${selDay.getFullYear()}-${String(selDay.getMonth()+1).padStart(2,'0')}-${String(selDay.getDate()).padStart(2,'0')}`:todayStr();
+  // Pre-create a stub event
+  curNoteId=id;curIsEvt=true;curType='';curAgence='';curSubcat='';curFiles=[];curTreated=false;
+  document.getElementById('mEvtName').textContent='Nouvel événement';
+  document.getElementById('mEvtMeta').textContent='Remplir les détails ci-dessous';
+  document.getElementById('mTitle').value='';
+  document.getElementById('noteEditor').innerHTML='';
+  document.getElementById('mEvtSection').style.display='block';
+  document.getElementById('mEvtNameInp').value='';
+  document.getElementById('mEvtDate').value=ds;
+  document.getElementById('mEvtStart').value='';
+  document.getElementById('mEvtEnd').value='';
+  document.getElementById('mEvtOrg').value='';
+  document.getElementById('detailTabBtn').style.display='none';
+  buildTypePills();buildSubcatPills();renderPJ();
+  const tc=document.getElementById('treatedCheck');tc.classList.remove('on');
+  setModalTab('note',document.querySelector('.modal-tab'));
+  const btn=document.getElementById('mSaveBtn');btn.textContent='Enregistrer';btn.classList.remove('saved');
+  document.getElementById('noteModal').classList.add('open');
+  setTimeout(()=>document.getElementById('mEvtNameInp').focus(),200);
+}
+
+function closeModal(){document.getElementById('noteModal').classList.remove('open');curNoteId=null;renderAll();}
+document.getElementById('noteModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+function setModalTab(t,btn){document.querySelectorAll('.modal-tab').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');document.getElementById('mNoteTab').style.display=t==='note'?'flex':'none';document.getElementById('mDetailTab').style.display=t==='detail'?'flex':'none';}
+
+function renderEvtDetail(evt){
+  document.getElementById('mDetailContent').innerHTML=`
+    <div class="sec-lbl" style="margin-bottom:10px">Détail de l'événement</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="detail-row"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="12" height="11" rx="1.5"/><path d="M1 5.5h12M4.5 1v2M9.5 1v2"/></svg><span>${esc(evt.title)}</span></div>
+      ${evt.event_date?`<div class="detail-row"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="12" height="11" rx="1.5"/><path d="M1 5.5h12"/></svg><span>${new Date(evt.event_date+'T00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</span></div>`:''}
+      <div class="detail-row"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3.5l2.5 1.5"/></svg><span>${ft(evt.sh,evt.sm)} – ${ft(evt.eh,evt.em)}</span></div>
+      ${evt.org?`<div class="detail-row"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12c0-2.5 2.5-4.5 6-4.5s6 2 6 4.5M7 7a3 3 0 100-6 3 3 0 000 6z"/></svg><span>${esc(evt.org)}</span></div>`:''}
+    </div>`;
+}
+
+function buildTypePills(){
+  const el=document.getElementById('mTypePills');
+  el.innerHTML=allCats().map(c=>`<button class="pill${curType===c.id?' on-'+c.id+(BASE_CATS.find(b=>b.id===c.id)?'':' on-custom'):''}" data-v="${c.id}" onclick="togglePill('type',this)">${esc(c.name)}</button>`).join('');
+}
+function buildSubcatPills(){
+  const cat=catById(curType);const subs=cat?.subcats||[];
+  document.getElementById('mSubcatSec').style.display=subs.length?'block':'none';
+  if(!subs.length)return;
+  document.getElementById('mSubcatPills').innerHTML=subs.map(s=>`<button class="pill${curSubcat===s?' on-custom':''}" data-v="${s}" onclick="toggleSubcat(this)">${esc(s)}</button>`).join('');
+}
+function togglePill(group,btn){
+  const v=btn.dataset.v;
+  if(group==='type'){curType=curType===v?'':v;curSubcat='';buildTypePills();buildSubcatPills();}
+  else{curAgence=curAgence===v?'':v;document.getElementById('mAgencePills').querySelectorAll('.pill').forEach(p=>{p.className='pill';if(p.dataset.v===curAgence)p.classList.add(`on-${curAgence}`);});}
+}
+function toggleSubcat(btn){curSubcat=curSubcat===btn.dataset.v?'':btn.dataset.v;buildSubcatPills();}
+function execCmd(cmd,val){document.getElementById('noteEditor').focus();document.execCommand(cmd,false,val||null);}
+function renderPJ(){
+  const ic={pdf:'#DC2626',doc:'#2563EB',docx:'#2563EB',xls:'#16A34A',xlsx:'#16A34A',png:'#7C3AED',jpg:'#7C3AED'};
+  document.getElementById('mPjChips').innerHTML=curFiles.map((f,i)=>{
+    const ext=f.name.split('.').pop().toLowerCase();
+    return`<div class="pj-chip"><svg viewBox="0 0 12 12" fill="none" stroke="${ic[ext]||'#6B7280'}" stroke-width="1.5"><rect x="2" y="1" width="8" height="10" rx="1"/></svg>${esc(f.name)}<button class="pj-del-btn" onclick="removeFile(${i})">×</button></div>`;
+  }).join('');
+}
+function addFiles(inp){Array.from(inp.files).forEach(f=>{if(!curFiles.find(c=>c.name===f.name))curFiles.push({name:f.name});});inp.value='';renderPJ();}
+function removeFile(i){curFiles.splice(i,1);renderPJ();}
+function toggleTreated(){curTreated=!curTreated;document.getElementById('treatedCheck').classList.toggle('on',curTreated);}
+
+async function saveNote(){
+  if(!curNoteId)return;
+  const btn=document.getElementById('mSaveBtn');btn.textContent='Enregistrement…';
+  const html=document.getElementById('noteEditor').innerHTML.trim();
+  const title=document.getElementById('mTitle').value.trim();
+  const evtName=document.getElementById('mEvtNameInp')?.value||'';
+  const evtDate=document.getElementById('mEvtDate')?.value||'';
+  const evtStart=document.getElementById('mEvtStart')?.value||'';
+  const evtEnd=document.getElementById('mEvtEnd')?.value||'';
+  const evtOrg=document.getElementById('mEvtOrg')?.value||'';
+
+  // If event fields filled and no existing event, save to agenda_events
+  if(curIsEvt&&evtName&&!events.find(e=>e.id===curNoteId)){
+    const sh=evtStart?parseInt(evtStart.split(':')[0]):0;
+    const sm=evtStart?parseInt(evtStart.split(':')[1]||0):0;
+    const eh=evtEnd?parseInt(evtEnd.split(':')[0]):0;
+    const em=evtEnd?parseInt(evtEnd.split(':')[1]||0):0;
+    const newEvt={id:curNoteId,title:evtName,org:evtOrg,event_date:evtDate,sh,sm,eh,em,color:COLORS[events.length%COLORS.length]};
+    events.push(newEvt);
+    await saveEvtSB(newEvt);
+  }
+
+  const d={
+    title:title||evtName||'Note libre',type:curType,agence:curAgence,subcat:curSubcat,
+    html,text:document.getElementById('noteEditor').innerText.trim(),
+    files:[...curFiles],treated:curTreated,libre:!curIsEvt,
+    evtName:curIsEvt?evtName:'',evtDate:curIsEvt?evtDate:'',
+    evtStart:curIsEvt?evtStart:'',evtEnd:curIsEvt?evtEnd:'',evtOrg:curIsEvt?evtOrg:'',
+    ts:new Date().toISOString()
+  };
+  notes[curNoteId]=d;
+  await saveNoteToSB(curNoteId,d);
+  btn.textContent='✓ Sauvegardé';btn.classList.add('saved');
+  setTimeout(()=>{btn.textContent='Enregistrer';btn.classList.remove('saved');},2000);
+  renderCalendar();renderTree();
+}
+
+async function deleteCurrentNote(){
+  if(!curNoteId||!confirm('Supprimer cette note ?'))return;
+  delete notes[curNoteId];await delNoteSB(curNoteId);closeModal();
+}
+
+async function deleteEvt(id){
+  if(!confirm('Supprimer cet événement ?'+( notes[id]?' La note associée sera aussi supprimée.':'')))return;
+  events=events.filter(e=>e.id!==id);await delEvtSB(id);
+  if(notes[id]){delete notes[id];await delNoteSB(id);}
+  if(curNoteId===id)closeModal();
+  renderCalendar();renderTree();
 }
 
 // ── TODO ──
 function renderTodo(){
   const today=todayStr();
   const urg=todos.filter(t=>!t.done&&t.urgent);
-  const urgBadge=document.getElementById('urgBadge');
-  urgBadge.style.display=urg.length?'inline':'none';
-  urgBadge.textContent=`${urg.length} urgente${urg.length>1?'s':''}`;
-
-  if(todoTab==='todo'){
-    // visible = not done AND (no date OR date <= today)
-    let visible=todos.filter(t=>!t.done&&(!t.dueDate||t.dueDate<=today));
-    // urgent first, then by date
-    visible.sort((a,b)=>{
-      if(a.urgent!==b.urgent) return a.urgent?-1:1;
-      return(a.dueDate||'9999')>(b.dueDate||'9999')?1:-1;
-    });
-    const planned=todos.filter(t=>!t.done&&t.dueDate&&t.dueDate>today);
-    document.getElementById('plannedCount').textContent=planned.length;
-    const pb=document.getElementById('plannedBtn');
-    pb.style.display=planned.length?'flex':'none';
-
-    const wrap=document.getElementById('todoListWrap');
-    if(!visible.length)wrap.innerHTML='<div class="todo-empty">Aucune tâche à faire pour aujourd\'hui</div>';
-    else wrap.innerHTML=visible.map(t=>todoItemHtml(t)).join('');
-
-    if(plannedOpen){
-      const ps=document.getElementById('plannedSection');
-      ps.innerHTML=planned.map(t=>plannedItemHtml(t)).join('');
-    }
-  } else {
-    document.getElementById('plannedBtn').style.display='none';
+  document.getElementById('urgBadge').style.display=urg.length?'inline':'none';
+  document.getElementById('urgBadge').textContent=`${urg.length} urgente${urg.length>1?'s':''}`;
+  const wrap=document.getElementById('todoListWrap');
+  if(todoTab==='done'){
     const done=todos.filter(t=>t.done);
-    const wrap=document.getElementById('todoListWrap');
-    if(!done.length)wrap.innerHTML='<div class="todo-empty">Aucune tâche terminée</div>';
-    else wrap.innerHTML=done.map(t=>todoItemHtml(t)).join('');
+    wrap.innerHTML=done.length?done.map(todoHtml).join(''):'<div class="todo-empty">Aucune tâche terminée</div>';
+    document.getElementById('plannedBtn').style.display='none';return;
   }
+  const vis=todos.filter(t=>!t.done&&(!t.dueDate||t.dueDate<=today));
+  vis.sort((a,b)=>a.urgent===b.urgent?0:(a.urgent?-1:1));
+  const planned=todos.filter(t=>!t.done&&t.dueDate&&t.dueDate>today);
+  const urgItems=vis.filter(t=>t.urgent),normItems=vis.filter(t=>!t.urgent);
+  let html='';
+  if(urgItems.length){html+=`<div class="todo-sec-hd urg"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="5"/><path d="M6 3v3M6 9v.5"/></svg>Urgent</div>`;html+=urgItems.map(todoHtml).join('');}
+  if(normItems.length){html+=`<div class="todo-sec-hd">À faire</div>`;html+=normItems.map(todoHtml).join('');}
+  if(!vis.length)html='<div class="todo-empty">Aucune tâche pour aujourd\u2019hui</div>';
+  wrap.innerHTML=html;
+  const pb=document.getElementById('plannedBtn');
+  pb.style.display=planned.length?'flex':'none';
+  document.getElementById('plannedTxt').textContent=`${plannedOpen?'Masquer':'Voir'} tâches planifiées (${planned.length})`;
+  if(plannedOpen){document.getElementById('plannedSection').style.display='block';document.getElementById('plannedSection').innerHTML=planned.map(t=>`<div class="planned-item"><div class="todo-check"></div><div class="todo-body"><div class="todo-text" style="color:var(--text2)">${esc(t.text)}</div><div class="todo-date-lbl"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1.5" width="10" height="9" rx="1"/><path d="M1 4.5h10M3.5 1v2M8.5 1v2"/></svg>${new Date(t.dueDate+'T00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})}</div></div></div>`).join('');}
+  else document.getElementById('plannedSection').style.display='none';
 }
 
-function todoItemHtml(t){
-  const isOverdue=t.dueDate&&t.dueDate<todayStr()&&!t.done;
-  const dateLabel=t.dueDate?`<div class="todo-date-lbl${isOverdue?' overdue':''}"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1.5" width="8" height="7" rx="1"/><path d="M1 4h8M3.5 1v1.5M6.5 1v1.5"/></svg>${new Date(t.dueDate+'T00:00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})}</div>`:''
+function todoHtml(t){
+  const today=todayStr();const over=t.dueDate&&t.dueDate<today&&!t.done;
+  const ds=t.dueDate?new Date(t.dueDate+'T00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}):'';
   return`<div class="todo-item">
-    <div class="todo-check${t.urgent&&!t.done?' urg':''}${t.done?' done':''}" onclick="toggleDone('${t.id}')">
-      ${t.done?`<svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4.5l2.5 2.5L8 1.5"/></svg>`:''}
-    </div>
+    <div class="todo-check${t.urgent&&!t.done?' urg':''}${t.done?' done':''}" onclick="toggleDone('${t.id}')">${t.done?'<svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4.5l2.5 2.5L8 1.5"/></svg>':''}</div>
     <div class="todo-body">
       <div class="todo-text${t.done?' done':''}${t.urgent&&!t.done?' urgent':''}">${esc(t.text)}</div>
-      ${dateLabel}
+      ${ds?`<div class="todo-date-lbl${over?' overdue':''}"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1.5" width="10" height="9" rx="1"/><path d="M1 4.5h10M3.5 1v2M8.5 1v2"/></svg>${ds}</div>`:''}
     </div>
     <button class="todo-del" onclick="delTodo('${t.id}')">×</button>
   </div>`;
 }
-function plannedItemHtml(t){
-  const d=new Date(t.dueDate+'T00:00:00');
-  const dateStr=d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
-  return`<div class="planned-item">
-    <div class="todo-check" style="border-color:var(--text3);cursor:default"></div>
-    <div class="todo-body">
-      <div class="todo-text" style="color:var(--text2)">${esc(t.text)}</div>
-      <div class="todo-date-lbl"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1.5" width="8" height="7" rx="1"/><path d="M1 4h8M3.5 1v1.5M6.5 1v1.5"/></svg>${dateStr}</div>
-    </div>
-    <button class="todo-del" style="opacity:1" onclick="delTodo('${t.id}')">×</button>
-  </div>`;
-}
-
 async function addTodo(){
   const txt=document.getElementById('todoTi').value.trim();if(!txt)return;
   const t={id:Date.now().toString(36),text:txt,urgent:urgNew,done:false,dueDate:document.getElementById('todoDt').value||todayStr()};
-  todos.unshift(t);
-  document.getElementById('todoTi').value='';document.getElementById('todoDt').value=todayStr();
+  todos.unshift(t);document.getElementById('todoTi').value='';document.getElementById('todoDt').value=todayStr();
   urgNew=false;document.getElementById('urgPill').classList.remove('on');
-  renderTodo();renderCalTodayTodos();sbUT(t);
+  renderTodo();saveTodoSB(t);
 }
 function toggleUrg(){urgNew=!urgNew;document.getElementById('urgPill').classList.toggle('on',urgNew);}
-async function toggleDone(id){const t=todos.find(x=>x.id===id);if(t){t.done=!t.done;renderTodo();renderCalTodayTodos();await sbUT(t);}}
-async function delTodo(id){todos=todos.filter(x=>x.id!==id);renderTodo();renderCalTodayTodos();await sbDT(id);}
-function setTodoTab(t,btn){todoTab=t;document.querySelectorAll('.todo-tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderTodo();}
-function togglePlanned(){
-  plannedOpen=!plannedOpen;
-  const ps=document.getElementById('plannedSection');
-  const today=todayStr();
-  const planned=todos.filter(t=>!t.done&&t.dueDate&&t.dueDate>today);
-  if(plannedOpen){ps.style.display='block';ps.innerHTML=planned.map(t=>plannedItemHtml(t)).join('');}
-  else ps.style.display='none';
-  document.getElementById('plannedBtnTxt').innerHTML=`${plannedOpen?'Masquer':'Voir'} tâches planifiées (<span id="plannedCount">${planned.length}</span>)`;
-}
+async function toggleDone(id){const t=todos.find(x=>x.id===id);if(t){t.done=!t.done;renderTodo();saveTodoSB(t);}}
+async function delTodo(id){todos=todos.filter(x=>x.id!==id);renderTodo();delTodoSB(id);}
+function setTodoTab(tab,btn){todoTab=tab;document.querySelectorAll('.todo-tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderTodo();}
+function togglePlanned(){plannedOpen=!plannedOpen;renderTodo();}
 
-// ── NOTE MODAL ──
-let modalTabCur='note';
-function openModal(evtId){
-  const evt=getEvt(evtId);if(!evt)return;
-  curEvtId=evtId;
-  const n=notes[evtId]||{};
-  curType=n.type||'';curAgence=n.agence||'';curSubcat=n.subcat||'';
-  curFiles=n.files?[...n.files]:[];curTreated=n.treated||false;
-  document.getElementById('mEvtName').textContent=evt.title;
-  document.getElementById('mEvtMeta').textContent=evt.date.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long'})+' · '+ft(evt.sh,evt.sm)+' – '+ft(evt.eh,evt.em)+' · '+evt.org;
-  document.getElementById('mTitle').value=n.title||evt.title;
-  document.getElementById('noteEditor').innerHTML=n.html||'';
-  document.getElementById('detailTabBtn').style.display='';
-  buildTypePills();syncPills('type',curType);syncPills('agence',curAgence);buildSubcatPills();renderPJ();
-  const tc=document.getElementById('treatedCheck');tc.classList.toggle('on',curTreated);tc.querySelector('svg').style.display=curTreated?'block':'none';
-  renderDetail(evt);
-  setModalTab('note',document.querySelector('.modal-tab'));
-  const btn=document.getElementById('mSaveBtn');btn.textContent='Enregistrer';btn.classList.remove('saved');
-  document.getElementById('noteModal').classList.add('open');
-  renderCalendar();
-}
-function openFreeModal(id){
-  const n=id?notes[id]:null;
-  curEvtId=id||('free_'+Date.now().toString(36));
-  curType=n?.type||'';curAgence=n?.agence||'';curSubcat=n?.subcat||'';
-  curFiles=n?.files?[...n.files]:[];curTreated=n?.treated||false;
-  document.getElementById('mEvtName').textContent=n?.title||'Nouvelle note libre';
-  document.getElementById('mEvtMeta').textContent='Note libre';
-  document.getElementById('mTitle').value=n?.title||'';
-  document.getElementById('noteEditor').innerHTML=n?.html||'';
-  document.getElementById('detailTabBtn').style.display='none';
-  buildTypePills();syncPills('type',curType);syncPills('agence',curAgence);buildSubcatPills();renderPJ();
-  const tc=document.getElementById('treatedCheck');tc.classList.toggle('on',curTreated);tc.querySelector('svg').style.display=curTreated?'block':'none';
-  setModalTab('note',document.querySelector('.modal-tab'));
-  const btn=document.getElementById('mSaveBtn');btn.textContent='Enregistrer';btn.classList.remove('saved');
-  document.getElementById('noteModal').classList.add('open');
-}
-function closeModal(){document.getElementById('noteModal').classList.remove('open');curEvtId=null;renderCalendar();renderTree();}
-document.getElementById('noteModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+// ── TREE ──
+function onSearch(){searchQ=document.getElementById('searchInput').value.trim().toLowerCase();document.getElementById('searchClear').style.display=searchQ?'inline':'none';renderTree();}
+function clearSearch(){searchQ='';document.getElementById('searchInput').value='';document.getElementById('searchClear').style.display='none';renderTree();}
+function hl(text,q){if(!q)return esc(text);return esc(text).replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),'<span class="search-highlight">$&</span>');}
+function selectFolder(id){treeFolder=id;renderTree();}
 
-function setModalTab(t,btn){
-  modalTabCur=t;
-  document.querySelectorAll('.modal-tab').forEach(b=>b.classList.remove('on'));
-  if(btn)btn.classList.add('on');
-  document.getElementById('mNoteTab').style.display=t==='note'?'flex':'none';
-  document.getElementById('mDetailTab').style.display=t==='detail'?'flex':'none';
-}
-
-function buildTypePills(){
-  const el=document.getElementById('mTypePills');
-  el.innerHTML=allCats().map(c=>`<button class="pill" data-v="${c.id}" onclick="togglePill('type',this)">${esc(c.name)}</button>`).join('');
-  if(curType)el.querySelectorAll('.pill').forEach(p=>{if(p.dataset.v===curType)p.classList.add(`on-${curType}`,'on-custom');});
-}
-function buildSubcatPills(){
-  const el=document.getElementById('mSubcatPills');
-  const cat=catById(curType);
-  const subcats=cat?.subcats||[];
-  if(!subcats.length){el.innerHTML='<span style="font-size:10px;color:var(--text3)">Aucune sous-catégorie — à configurer dans les paramètres</span>';return;}
-  el.innerHTML=subcats.map(s=>`<button class="pill${curSubcat===s?' on-custom':''}" data-v="${s}" onclick="toggleSubcat(this)">${esc(s)}</button>`).join('');
-}
-function togglePill(group,btn){
-  const v=btn.dataset.v;
-  if(group==='type'){
-    curType=curType===v?'':v;curSubcat='';
-    buildTypePills();
-    document.getElementById('mTypePills').querySelectorAll('.pill').forEach(p=>{
-      if(p.dataset.v===curType)p.classList.add(`on-${curType}`,'on-custom');
-    });
-    buildSubcatPills();
-  } else {
-    curAgence=curAgence===v?'':v;
-    syncPills('agence',curAgence);
-  }
-}
-function toggleSubcat(btn){
-  const v=btn.dataset.v;
-  curSubcat=curSubcat===v?'':v;
-  buildSubcatPills();
-}
-function syncPills(group,val){
-  const el=document.getElementById(group==='type'?'mTypePills':'mAgencePills');
-  el.querySelectorAll('.pill').forEach(p=>{
-    p.classList.remove('on-client','on-candidat','on-management','on-agence','on-autres','on-lemans','on-niort','on-custom');
-    if(p.dataset.v===val)p.classList.add(`on-${val}`);
-  });
-}
-function execCmd(cmd,val){document.getElementById('noteEditor').focus();document.execCommand(cmd,false,val||null);}
-function renderPJ(){
-  const icons={pdf:'#DC2626',doc:'#2563EB',docx:'#2563EB',xls:'#16A34A',xlsx:'#16A34A',png:'#7C3AED',jpg:'#7C3AED'};
-  document.getElementById('mPjChips').innerHTML=curFiles.map((f,i)=>{
-    const ext=f.name.split('.').pop().toLowerCase();
-    return`<div class="pj-chip"><svg viewBox="0 0 12 12" fill="none" stroke="${icons[ext]||'#6B7280'}" stroke-width="1.5"><rect x="2" y="1" width="8" height="10" rx="1"/><path d="M4 4h4M4 6h4M4 8h2"/></svg>${esc(f.name)}<button class="pj-del-btn" onclick="removeFile(${i})">×</button></div>`;
-  }).join('');
-}
-function addFiles(input){Array.from(input.files).forEach(f=>{if(!curFiles.find(c=>c.name===f.name))curFiles.push({name:f.name,size:f.size});});input.value='';renderPJ();}
-function removeFile(i){curFiles.splice(i,1);renderPJ();}
-function toggleTreated(){
-  curTreated=!curTreated;
-  const tc=document.getElementById('treatedCheck');tc.classList.toggle('on',curTreated);tc.querySelector('svg').style.display=curTreated?'block':'none';
-}
-async function saveNote(){
-  if(!curEvtId)return;
-  const evt=getEvt(curEvtId);
-  const html=document.getElementById('noteEditor').innerHTML.trim();
-  const title=document.getElementById('mTitle').value.trim();
-  notes[curEvtId]={
-    title:title||(evt?.title||'Note libre'),type:curType,agence:curAgence,subcat:curSubcat,html,
-    text:document.getElementById('noteEditor').innerText.trim(),
-    files:[...curFiles],treated:curTreated,
-    eventTitle:evt?.title||'',eventDate:evt?.date?.toISOString()||'',
-    libre:!evt,ts:new Date().toISOString()
-  };
-  const btn=document.getElementById('mSaveBtn');btn.textContent='Enregistrement…';
-  await sbUN(curEvtId, notes[curEvtId]);
-  btn.textContent='✓ Sauvegardé';btn.classList.add('saved');
-  setTimeout(()=>{btn.textContent='Enregistrer';btn.classList.remove('saved');},2000);
-  renderCalendar();renderTree();
-}
-async function deleteNote(){
-  if(!curEvtId)return;
-  if(!confirm('Supprimer cette note ?'))return;
-  delete notes[curEvtId];await sbDN(curEvtId);closeModal();
-}
-function renderDetail(evt){
-  document.getElementById('mDetailContent').innerHTML=`
-    <div class="sec-lbl" style="margin-bottom:10px">Détails de l'événement</div>
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <div class="detail-row"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="12" height="11" rx="1.5"/><path d="M1 5.5h12"/></svg><span>${evt.date.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</span></div>
-      <div class="detail-row"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3.5l2.5 1.5"/></svg><span>${ft(evt.sh,evt.sm)} – ${ft(evt.eh,evt.em)}</span></div>
-      ${evt.loc?`<div class="detail-row"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 1C5.3 1 4 2.3 4 4c0 2.8 3 7 3 7s3-4.2 3-7c0-1.7-1.3-3-3-3z"/><circle cx="7" cy="4" r="1"/></svg><span>${esc(evt.loc)}</span></div>`:''}
-      <div class="detail-row"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12c0-2.5 2.5-4.5 6-4.5s6 2 6 4.5M7 7a3 3 0 100-6 3 3 0 000 6z"/></svg><span>Organisé par ${esc(evt.org)}</span></div>
-      ${evt.att.length?`<div class="detail-row"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12c0-2 1.8-3.5 4-3.5h4c2.2 0 4 1.5 4 3.5M5 5a2 2 0 104 0 2 2 0 00-4 0z"/></svg><div style="display:flex;flex-wrap:wrap">${evt.att.map(a=>`<span class="att-chip"><span class="att-av">${a[0]}</span>${esc(a)}</span>`).join('')}</div></div>`:''}
-    </div>`;
-}
-
-// ── SEARCH ──
-function onSearch(){
-  searchQ=document.getElementById('searchInput').value.trim().toLowerCase();
-  document.getElementById('searchClear').style.display=searchQ?'inline':'none';
-  renderTree();
-}
-function clearSearch(){
-  searchQ='';
-  document.getElementById('searchInput').value='';
-  document.getElementById('searchClear').style.display='none';
-  renderTree();
-}
-function highlightText(text,q){
-  if(!q)return esc(text);
-  const escaped=esc(text);
-  const re=new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
-  return escaped.replace(re,'<span class="search-highlight">$1</span>');
-}
-
-// ── FILE TREE ──
-function notesForFolder(fid){
-  const all=Object.entries(notes).map(([id,n])=>({id,...n}));
-  if(fid==='all')return all;
-  if(fid==='libre')return all.filter(n=>n.libre);
-  return all.filter(n=>n.type===fid);
-}
-function searchNotes(q){
-  if(!q)return null;
-  return Object.entries(notes).map(([id,n])=>({id,...n})).filter(n=>
-    (n.title||'').toLowerCase().includes(q)||
-    (n.text||'').toLowerCase().includes(q)||
-    (n.eventTitle||'').toLowerCase().includes(q)||
-    (n.subcat||'').toLowerCase().includes(q)
-  );
-}
 function renderTree(){
-  const sb=document.getElementById('treeSb');
   const cats=allCats();
-  let sbHtml=`<div class="sf-lbl">Toutes</div>
-    <div class="sf-item${treeFolder==='all'?' act':''}" onclick="selectFolder('all')">
-      <svg viewBox="0 0 14 14" fill="none" stroke="var(--text2)" stroke-width="1.5"><path d="M1 3a1 1 0 011-1h3l2 2h5a1 1 0 011 1v6a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/></svg>
-      Toutes les notes<span class="sf-count">${Object.keys(notes).length}</span>
-    </div>`;
-  sbHtml+=`<div class="sf-lbl" style="margin-top:4px">Catégories</div>`;
+  const sb=document.getElementById('treeSb');
+  const all=Object.entries(notes).map(([id,n])=>({id,...n}));
+  let sbHtml=`<div class="sf-lbl">Toutes</div><div class="sf-item${treeFolder==='all'?' act':''}" onclick="selectFolder('all')"><svg viewBox="0 0 14 14" fill="none" stroke="var(--text2)" stroke-width="1.5"><path d="M1 3a1 1 0 011-1h3l2 2h5a1 1 0 011 1v6a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/></svg>Toutes<span class="sf-count">${all.length}</span></div><div class="sf-lbl" style="margin-top:4px">Catégories</div>`;
   cats.forEach(c=>{
-    const cnt=notesForFolder(c.id).length;
-    const isA=treeFolder===c.id;
-    sbHtml+=`<div class="sf-item${isA?' act':''}" onclick="selectFolder('${c.id}')">
-      <svg viewBox="0 0 14 14" fill="none" stroke="${c.color}" stroke-width="1.5"><path d="M1 3a1 1 0 011-1h3l2 2h5a1 1 0 011 1v6a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/></svg>
-      ${esc(c.name)}<span class="sf-count">${cnt}</span>
-    </div>`;
-    // sub-cats
+    const cnt=all.filter(n=>n.type===c.id).length;
+    sbHtml+=`<div class="sf-item${treeFolder===c.id?' act':''}" onclick="selectFolder('${c.id}')"><svg viewBox="0 0 14 14" fill="none" stroke="${c.color}" stroke-width="1.5"><path d="M1 3a1 1 0 011-1h3l2 2h5a1 1 0 011 1v6a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/></svg>${esc(c.name)}<span class="sf-count">${cnt}</span></div>`;
     (c.subcats||[]).forEach(s=>{
-      const scnt=Object.values(notes).filter(n=>n.type===c.id&&n.subcat===s).length;
-      const scId=`${c.id}__${s}`;
-      sbHtml+=`<div class="sf-item sub${treeFolder===scId?' act':''}" onclick="selectFolder('${scId}')">
-        <svg viewBox="0 0 14 14" fill="none" stroke="${c.color}" stroke-width="1.5" opacity=".6"><path d="M2 5h10M2 9h7"/></svg>
-        ${esc(s)}<span class="sf-count">${scnt}</span>
-      </div>`;
+      const scId=c.id+'__'+s,scnt=all.filter(n=>n.type===c.id&&n.subcat===s).length;
+      sbHtml+=`<div class="sf-item sf-sub${treeFolder===scId?' act':''}" onclick="selectFolder('${scId}')"><svg viewBox="0 0 14 14" fill="none" stroke="${c.color}" stroke-width="1.5" opacity=".6"><path d="M2 5h10M2 9h7"/></svg>${esc(s)}<span class="sf-count">${scnt}</span></div>`;
     });
   });
-  sbHtml+=`<div class="sf-div"></div>
-    <div class="sf-item${treeFolder==='libre'?' act':''}" onclick="selectFolder('libre')">
-      <svg viewBox="0 0 14 14" fill="none" stroke="#7C3AED" stroke-width="1.5"><rect x="1" y="1" width="12" height="12" rx="1.5"/><path d="M4 4h6M4 7h6M4 10h4"/></svg>
-      Notes libres<span class="sf-count">${notesForFolder('libre').length}</span>
-    </div>`;
+  sbHtml+=`<div class="sf-div"></div><div class="sf-item${treeFolder==='libre'?' act':''}" onclick="selectFolder('libre')"><svg viewBox="0 0 14 14" fill="none" stroke="#7C3AED" stroke-width="1.5"><rect x="1" y="1" width="12" height="12" rx="1.5"/><path d="M4 4h6M4 7h6M4 10h4"/></svg>Notes libres<span class="sf-count">${all.filter(n=>n.libre).length}</span></div>`;
   sb.innerHTML=sbHtml;
 
-  // content
   const tc=document.getElementById('treeContent');
-  let items, titleLabel;
+  let items=all;
+  if(searchQ){items=items.filter(n=>(n.title||'').toLowerCase().includes(searchQ)||(n.text||'').toLowerCase().includes(searchQ)||(n.evtName||'').toLowerCase().includes(searchQ));}
+  else if(treeFolder.includes('__')){const[cid,sub]=treeFolder.split('__');items=items.filter(n=>n.type===cid&&n.subcat===sub);}
+  else if(treeFolder!=='all')items=treeFolder==='libre'?items.filter(n=>n.libre):items.filter(n=>n.type===treeFolder);
 
-  if(searchQ){
-    items=searchNotes(searchQ)||[];
-    titleLabel=`<div class="search-results-lbl">
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="4.5"/><path d="M9.5 9.5L13 13"/></svg>
-      ${items.length} résultat${items.length!==1?'s':''} pour "<strong>${esc(searchQ)}</strong>"
-    </div>`;
-  } else {
-    if(treeFolder.includes('__')){
-      const [catId,sub]=treeFolder.split('__');
-      items=Object.entries(notes).map(([id,n])=>({id,...n})).filter(n=>n.type===catId&&n.subcat===sub);
-      const cat=catById(catId);
-      titleLabel=`<div class="tc-hd"><div class="tc-title">${esc(cat?.name||catId)} / ${esc(sub)} — ${items.length} note${items.length!==1?'s':''}</div></div>`;
-    } else {
-      items=notesForFolder(treeFolder);
-      const folderName=treeFolder==='all'?'Toutes les notes':treeFolder==='libre'?'Notes libres':(catById(treeFolder)?.name||treeFolder);
-      titleLabel=`<div class="tc-hd"><div class="tc-title">${esc(folderName)} — ${items.length} note${items.length!==1?'s':''}</div></div>`;
-    }
-  }
-  const sortV=document.getElementById('noteSortSel')?.value||'date_desc';
-  if(sortV==='date_desc')items=items.sort((a,b)=>new Date(b.ts)-new Date(a.ts));
-  else if(sortV==='date_asc')items=items.sort((a,b)=>new Date(a.ts)-new Date(b.ts));
-  else if(sortV==='alpha')items=items.sort((a,b)=>(a.title||a.eventTitle||'').localeCompare(b.title||b.eventTitle||''));
-  else if(sortV==='treated')items=items.sort((a,b)=>(a.treated?1:0)-(b.treated?1:0)||new Date(b.ts)-new Date(a.ts));
-  tc.innerHTML=titleLabel;
-  if(!items.length){tc.innerHTML+=`<div class="no-files">${searchQ?'Aucun résultat':'Aucune note'}<br><small>Cliquez sur un événement ou "Note libre" pour créer une note</small></div>`;return;}
+  const sv=document.getElementById('sortSel')?.value||'date_desc';
+  if(sv==='date_desc')items.sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+  else if(sv==='date_asc')items.sort((a,b)=>new Date(a.ts)-new Date(b.ts));
+  else if(sv==='alpha')items.sort((a,b)=>(a.title||a.evtName||'').localeCompare(b.title||b.evtName||''));
+  else items.sort((a,b)=>(a.treated?1:0)-(b.treated?1:0)||new Date(b.ts)-new Date(a.ts));
+
+  const fn=searchQ?`Résultats pour "${esc(searchQ)}"`:treeFolder==='all'?'Toutes les notes':treeFolder==='libre'?'Notes libres':(catById(treeFolder.split('__')[0])?.name||treeFolder);
+  tc.innerHTML=`<div class="tc-hd"><div class="tc-title">${fn} — ${items.length}</div></div>`;
+  if(!items.length){tc.innerHTML+='<div class="no-files">Aucune note<br><small>Cliquez sur un événement ou "Note libre" pour commencer</small></div>';return;}
   tc.innerHTML+=`<div class="file-grid">${items.map(n=>{
     const cat=catById(n.type);
-    const typeBadge=n.type?`<span class="fc-badge" style="background:${cat?.color+'22'||'#F1F5F9'};color:${cat?.color||'#475569'}">${esc(cat?.name||n.type)}</span>`:'';
-    const agBadge=n.agence?`<span class="fc-badge ${n.agence==='lemans'?'bg-lemans':'bg-niort'}">${n.agence==='lemans'?'Le Mans':'Niort'}</span>`:'';
-    const subcatBadge=n.subcat?`<span class="fc-badge bg-autres">${esc(n.subcat)}</span>`:'';
-    const pj=n.files?.length||0;
-    const dateStr=new Date(n.ts).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
-    const onClick=n.libre?`openFreeModal('${n.id}')`:`openModal('${n.id}')`;
-    const titleHtml=searchQ?highlightText(n.title||n.eventTitle||'—',searchQ):esc(n.title||n.eventTitle||'—');
-    const previewHtml=searchQ?highlightText(n.text||'',searchQ):esc(n.text||'');
-    return`<div class="file-card${n.id===curEvtId?' act':''}${n.treated?' treated':''}" onclick="${onClick}">
+    const tb=n.type?`<span class="fc-badge" style="background:${(cat?.color||'#475569')+'22'};color:${cat?.color||'#475569'}">${esc(cat?.name||n.type)}</span>`:'';
+    const ab=n.agence?`<span class="fc-badge ${n.agence==='lemans'?'bg-lemans':'bg-niort'}">${n.agence==='lemans'?'Le Mans':'Niort'}</span>`:'';
+    const ds=new Date(n.ts).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
+    const titleHtml=searchQ?hl(n.title||n.evtName||'—',searchQ):esc(n.title||n.evtName||'—');
+    const prevHtml=searchQ?hl(n.text||'',searchQ):esc(n.text||'');
+    return`<div class="file-card${n.id===curNoteId?' act':''}${n.treated?' treated':''}" onclick="openNoteModal('${n.id}')">
       <div class="fc-top">
         <svg class="fc-icon" viewBox="0 0 16 16" fill="none" stroke="${n.libre?'#7C3AED':'var(--blue)'}" stroke-width="1.5"><rect x="1" y="1" width="14" height="14" rx="2"/><path d="M4 5h8M4 8h8M4 11h5"/></svg>
-        <div class="fc-badges">${typeBadge}${agBadge}${subcatBadge}</div>
+        <div class="fc-badges">${tb}${ab}</div>
       </div>
       <div class="fc-title">${titleHtml}</div>
-      ${n.eventTitle&&!n.libre?`<div class="fc-sub">${esc(n.eventTitle)}</div>`:''}
-      ${n.text?`<div class="fc-preview">${previewHtml}</div>`:''}
+      ${n.evtName&&!n.libre?`<div class="fc-sub">${esc(n.evtName)}</div>`:''}
+      ${n.text?`<div class="fc-preview">${prevHtml}</div>`:''}
       <div class="fc-footer">
-        <span class="fc-date">${dateStr}</span>
-        ${n.treated?`<span class="fc-treated"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 5l3 3L9 2"/></svg>Traitée</span>`:''}
-        ${pj?`<span style="font-size:9px;color:var(--text3)">📎${pj}</span>`:''}
+        <span class="fc-date">${ds}</span>
+        ${n.treated?'<span class="fc-treated"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 5l3 3L9 2"/></svg>Traitée</span>':''}
       </div>
     </div>`;
   }).join('')}</div>`;
 }
-function selectFolder(id){treeFolder=id;renderTree();}
-function newFreeNote(){openFreeModal(null);}
-async function deleteFreeNote(){if(!freeSel||!confirm('Supprimer cette note ?'))return;delete notes[freeSel];await sbDN(freeSel);document.getElementById('freeEditor').style.display='none';freeSel=null;renderTree();}
 
 // ── SETTINGS ──
 function openSettings(){renderCatBlocks();document.getElementById('settingsModal').classList.add('open');}
 function closeSettings(){document.getElementById('settingsModal').classList.remove('open');}
 document.getElementById('settingsModal').addEventListener('click',function(e){if(e.target===this)closeSettings();});
-
 function renderCatBlocks(){
   const el=document.getElementById('catBlocks');
   el.innerHTML=allCats().map((c,i)=>{
     const isBase=i<BASE_CATS.length;
-    const subcats=(c.subcats||[]);
-    return`<div class="cat-block">
-      <div class="cat-block-hd">
-        <div class="cat-dot" style="background:${c.color}"></div>
-        <div class="cat-block-name">${esc(c.name)}</div>
-        ${!isBase?`<button class="cat-block-del" onclick="delCat('${c.id}')">×</button>`:''}
-      </div>
-      <div class="subcat-list">
-        ${subcats.map((s,si)=>`<div class="subcat-item">
-          <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" style="width:10px;height:10px;flex-shrink:0"><path d="M2 1v5h6"/></svg>
-          ${esc(s)}
-          <button class="subcat-del" onclick="delSubcat('${c.id}',${si})">×</button>
-        </div>`).join('')}
-        <div class="add-subcat-row">
-          <input class="add-subcat-input" id="sub_${c.id}" placeholder="+ sous-catégorie…" onkeydown="if(event.key==='Enter')addSubcat('${c.id}')">
-          <button class="add-subcat-btn" onclick="addSubcat('${c.id}')">OK</button>
-        </div>
-      </div>
-    </div>`;
+    return`<div class="cat-block"><div class="cat-block-hd"><div class="cat-dot" style="background:${c.color}"></div><div class="cat-block-name">${esc(c.name)}</div>${!isBase?`<button class="cat-block-del" onclick="delCat('${c.id}')">×</button>`:''}</div>
+      <div class="subcat-list">${(c.subcats||[]).map((s,si)=>`<div class="subcat-item"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" style="width:10px;height:10px;flex-shrink:0"><path d="M2 1v5h6"/></svg>${esc(s)}<button class="subcat-del" onclick="delSubcat('${c.id}',${si})">×</button></div>`).join('')}
+      <div class="add-subcat-row"><input class="add-subcat-input" id="sub_${c.id}" placeholder="+ sous-catégorie…" onkeydown="if(event.key==='Enter')addSubcat('${c.id}')"><button class="add-subcat-btn" onclick="addSubcat('${c.id}')">OK</button></div></div></div>`;
   }).join('');
 }
 async function addCat(){
   const v=document.getElementById('newCatInput').value.trim();if(!v)return;
   const hues=[210,270,330,30,150,60,180,300];
-  const color=`hsl(${hues[customCats.length%hues.length]},60%,40%)`;
-  customCats.push({id:'c_'+Date.now().toString(36),name:v,color,subcats:[]});
-  document.getElementById('newCatInput').value='';
-  await sbUC(customCats[customCats.length-1]);renderCatBlocks();renderTree();
+  const c={id:'c_'+Date.now().toString(36),name:v,color:`hsl(${hues[customCats.length%hues.length]},60%,40%)`,subcats:[]};
+  customCats.push(c);document.getElementById('newCatInput').value='';
+  renderCatBlocks();renderTree();saveCatSB(c);
 }
-async function delCat(id){customCats=customCats.filter(c=>c.id!==id);renderCatBlocks();renderTree();await sbDC(id);}
-function addSubcat(catId){
-  const input=document.getElementById('sub_'+catId);
-  const v=input.value.trim();if(!v)return;
+async function delCat(id){customCats=customCats.filter(c=>c.id!==id);renderCatBlocks();renderTree();delCatSB(id);}
+async function addSubcat(catId){
+  const inp=document.getElementById('sub_'+catId);const v=inp.value.trim();if(!v)return;
   const cat=customCats.find(c=>c.id===catId)||BASE_CATS.find(c=>c.id===catId);
   if(cat){if(!cat.subcats)cat.subcats=[];cat.subcats.push(v);}
-  if(!customCats.find(c=>c.id===catId)){
-    // base cat — store subcat modification
-    let bc=customCats.find(c=>c.id==='_base_'+catId);
-    if(!bc){bc={id:'_base_'+catId,_baseRef:catId,subcats:[]};customCats.push(bc);}
-    if(!bc.subcats)bc.subcats=[];bc.subcats.push(v);
-    // also update BASE_CATS subcats in memory
-    const b=BASE_CATS.find(c=>c.id===catId);if(b){if(!b.subcats)b.subcats=[];b.subcats.push(v);}
-  }
-  input.value='';renderCatBlocks();
+  inp.value='';renderCatBlocks();
+  if(customCats.find(c=>c.id===catId))saveCatSB(cat);
 }
 function delSubcat(catId,idx){
-  const cat=customCats.find(c=>c.id===catId);
-  if(cat){cat.subcats.splice(idx,1);}
-  else{const b=BASE_CATS.find(c=>c.id===catId);if(b)b.subcats.splice(idx,1);}
-  renderCatBlocks();renderTree();
+  const cat=customCats.find(c=>c.id===catId)||BASE_CATS.find(c=>c.id===catId);
+  if(cat){cat.subcats.splice(idx,1);}renderCatBlocks();renderTree();
 }
-function handleIcs(input){
-  if(input.files[0])document.getElementById('icsStatus').textContent=`✓ "${input.files[0].name}" importé. Les vrais événements Outlook s'afficheront ici dans la version connectée.`;
-}
-
-
-// ── TODAY TODOS IN CALENDAR ──
-function renderCalTodayTodos(){
-  const today=todayStr();
-  const el=document.getElementById('calTodayTodos');
-  const todayTodos=todos.filter(t=>!t.done&&(!t.dueDate||t.dueDate===today));
-  const urgTodos=todayTodos.filter(t=>t.urgent);
-  const normTodos=todayTodos.filter(t=>!t.urgent);
-  if(!todayTodos.length){el.innerHTML='';return;}
-  el.innerHTML=`<div class="cal-today-todos-hd"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3h12M1 7h8M1 11h6"/></svg>Tâches du jour (${todayTodos.length})</div>`+
-    [...urgTodos,...normTodos].map(t=>`<div class="cal-todo-chip${t.urgent?' urg':''}">
-      <div class="cal-todo-dot${t.urgent?' urg':''}"></div>${esc(t.text)}
-    </div>`).join('');
-}
-
-// ── FULLSCREEN PANELS ──
-let fpCalView='week',fpWeekOff=0,fpSelDay=new Date(Y,Mo,D),fpTodoTab='todo',fpUrgNew=false,fpNotesFolder='all';
-
-function openFullscreen(section){
-  document.getElementById('fp'+section.charAt(0).toUpperCase()+section.slice(1)).classList.add('open');
-  if(section==='cal'){fpCalView=calView;fpWeekOff=weekOff;fpSelDay=selDay;fpRenderCal();}
-  if(section==='todo'){document.getElementById('fpTodoDt').value=todayStr();fpRenderTodo();}
-  if(section==='notes'){renderFpNotesSb();renderFpNotes();}
-}
-function closeFullscreen(section){
-  document.getElementById('fp'+section.charAt(0).toUpperCase()+section.slice(1)).classList.remove('open');
-}
-
-// ── FP CALENDAR ──
-function fpSetCalView(v){fpCalView=v;document.getElementById('fpBtnWeek').classList.toggle('on',v==='week');document.getElementById('fpBtnDay').classList.toggle('on',v==='day');fpRenderCal();}
-function fpCalPrev(){if(fpCalView==='week')fpWeekOff--;else fpSelDay=new Date(fpSelDay.getFullYear(),fpSelDay.getMonth(),fpSelDay.getDate()-1);fpRenderCal();}
-function fpCalNext(){if(fpCalView==='week')fpWeekOff++;else fpSelDay=new Date(fpSelDay.getFullYear(),fpSelDay.getMonth(),fpSelDay.getDate()+1);fpRenderCal();}
-function fpGoToday(){fpWeekOff=0;fpSelDay=new Date(Y,Mo,D);fpRenderCal();}
-function fpRenderCal(){
-  const body=document.getElementById('fpCalBody');
-  if(fpCalView==='week'){
-    const ws=weekStart(fpWeekOff),we=new Date(ws);we.setDate(ws.getDate()+6);
-    const lbl=ws.getMonth()===we.getMonth()?`${ws.getDate()} – ${we.getDate()} ${MS[ws.getMonth()]} ${ws.getFullYear()}`:`${ws.getDate()} ${MS[ws.getMonth()]} – ${we.getDate()} ${MS[we.getMonth()]}`;
-    body.innerHTML='';
-    const hd=document.createElement('div');hd.style.cssText='padding:10px 16px;font-size:13px;font-weight:500;border-bottom:1px solid var(--border);background:var(--blue-bg);color:var(--blue)';hd.textContent=lbl;body.appendChild(hd);
-    const strip=document.createElement('div');strip.className='week-strip';
-    for(let i=0;i<7;i++){
-      const d=new Date(ws);d.setDate(ws.getDate()+i);
-      const evts=evtsFor(d),isT=sd(d,NOW),isSel=sd(d,fpSelDay),isWe=i>=5;
-      const cell=document.createElement('div');
-      cell.className='wday'+(isSel?' sel':'')+(isT&&!isSel?' today':'')+(isWe?' we':'');
-      cell.innerHTML=`<div class="wd-name">${DAYS[i]}</div><div class="wd-num">${d.getDate()}</div><div class="wd-dots">${evts.slice(0,3).map(e=>`<div class="dot${notes[e.id]?' noted':''}"></div>`).join('')}</div>`;
-      if(!isWe)cell.onclick=()=>{fpSelDay=d;fpRenderCal();};
-      strip.appendChild(cell);
-    }
-    body.appendChild(strip);
-    const evts=evtsFor(fpSelDay);
-    const lbl2=document.createElement('div');lbl2.className='evt-day-lbl';
-    lbl2.textContent=fpSelDay.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+' · '+evts.length+' événement'+(evts.length!==1?'s':'');
-    body.appendChild(lbl2);
-    const scroll=document.createElement('div');scroll.className='evt-scroll';
-    scroll.innerHTML=evts.length?evts.map(e=>evtRowHtml(e)).join(''):'<div class="no-evts">Aucun événement ce jour</div>';
-    body.appendChild(scroll);
-  } else {
-    const lbl=fpSelDay.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    body.innerHTML='';
-    const hd=document.createElement('div');hd.style.cssText='padding:8px 13px;border-bottom:1px solid var(--border);font-size:12px;font-weight:500;background:var(--blue-bg);color:var(--blue)';hd.textContent=lbl;body.appendChild(hd);
-    const evts=evtsFor(fpSelDay).sort((a,b)=>a.sh*60+a.sm-(b.sh*60+b.sm));
-    const wrapper=document.createElement('div');wrapper.style.cssText='flex:1;overflow-y:auto';
-    wrapper.innerHTML=Array.from({length:12},(v,i)=>i+8).map(h=>{
-      const slotEvts=evts.filter(e=>e.sh===h);
-      return`<div class="day-slot"><div class="slot-time">${ft(h,0)}</div><div class="slot-body">${slotEvts.map(e=>`<div class="slot-evt${notes[e.id]?' has-note':''}" onclick="openModal('${e.id}')"><div class="slot-evt-name">${esc(e.title)}</div><div class="slot-evt-time">${ft(e.sh,e.sm)}–${ft(e.eh,e.em)} · ${esc(e.org)}</div></div>`).join('')}</div></div>`;
-    }).join('');
-    body.appendChild(wrapper);
-  }
-  // Side panel: today's todos & notes
-  const td=todayStr();
-  const fpTT=document.getElementById('fpTodayTodos');
-  const todayT=todos.filter(t=>!t.done&&(!t.dueDate||t.dueDate===td));
-  fpTT.innerHTML=todayT.length?todayT.map(t=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
-    <div class="todo-check${t.urgent?' urg':''}" onclick="toggleDone('${t.id}');fpRenderCal();" style="flex-shrink:0;margin-top:1px"></div>
-    <div><div class="todo-text${t.urgent?' urgent':''}">${esc(t.text)}</div></div>
-  </div>`).join(''):'<div style="font-size:11px;color:var(--text3);font-style:italic">Aucune tâche pour aujourd’hui</div>';
-  const fpTN=document.getElementById('fpTodayNotes');
-  const todayN=Object.entries(notes).filter(([,n])=>n.eventDate&&n.eventDate.startsWith(td)).map(([id,n])=>({id,...n}));
-  fpTN.innerHTML=todayN.length?todayN.map(n=>`<div style="padding:6px;border:1px solid var(--border);border-radius:6px;margin-bottom:6px;cursor:pointer" onclick="openModal('${n.id}')">
-    <div style="font-size:11px;font-weight:500">${esc(n.title||n.eventTitle||'—')}</div>
-    ${n.text?`<div style="font-size:10px;color:var(--text2);margin-top:2px">${esc(n.text.slice(0,60))}${n.text.length>60?'…':''}</div>`:''}
-  </div>`).join(''):'<div style="font-size:11px;color:var(--text3);font-style:italic">Aucune note pour aujourd’hui</div>';
-}
-
-// ── FP TODO ──
-function fpRenderTodo(){
-  const today=todayStr();
-  const list=document.getElementById('fpTodoList');
-  let items=fpTodoTab==='todo'?todos.filter(t=>!t.done):todos.filter(t=>t.done);
-  if(fpTodoTab==='todo'){
-    items.sort((a,b)=>{if(a.urgent!==b.urgent)return a.urgent?-1:1;return(a.dueDate||'9999')>(b.dueDate||'9999')?1:-1;});
-  }
-  list.innerHTML=items.length?items.map(t=>todoItemHtml(t)).join(''):'<div class="todo-empty">Aucune tâche</div>';
-}
-function fpSetTodoTab(t,btn){fpTodoTab=t;document.querySelectorAll('#fpTodo .todo-tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');fpRenderTodo();}
-function fpToggleUrg(){fpUrgNew=!fpUrgNew;document.getElementById('fpUrgPill').classList.toggle('on',fpUrgNew);}
-async function fpAddTodo(){
-  const txt=document.getElementById('fpTodoTi').value.trim();if(!txt)return;
-  const t={id:Date.now().toString(36),text:txt,urgent:fpUrgNew,done:false,dueDate:document.getElementById('fpTodoDt').value||todayStr()};
-  todos.unshift(t);document.getElementById('fpTodoTi').value='';document.getElementById('fpTodoDt').value=todayStr();
-  fpUrgNew=false;document.getElementById('fpUrgPill').classList.remove('on');
-  renderTodo();fpRenderTodo();await sbUT(t);
-}
-
-// ── FP NOTES ──
-function renderFpNotesSb(){
-  const sb=document.getElementById('fpNotesSb');
-  const cats=allCats();
-  let html=`<div class="sf-lbl">Toutes</div><div class="sf-item${fpNotesFolder==='all'?' act':''}" onclick="setFpFolder('all')"><svg viewBox="0 0 14 14" fill="none" stroke="var(--text2)" stroke-width="1.5"><path d="M1 3a1 1 0 011-1h3l2 2h5a1 1 0 011 1v6a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/></svg>Toutes<span class="sf-count">${Object.keys(notes).length}</span></div><div class="sf-lbl">Catégories</div>`;
-  cats.forEach(c=>{const cnt=Object.values(notes).filter(n=>n.type===c.id).length;html+=`<div class="sf-item${fpNotesFolder===c.id?' act':''}" onclick="setFpFolder('${c.id}')"><svg viewBox="0 0 14 14" fill="none" stroke="${c.color}" stroke-width="1.5"><path d="M1 3a1 1 0 011-1h3l2 2h5a1 1 0 011 1v6a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/></svg>${esc(c.name)}<span class="sf-count">${cnt}</span></div>`;});
-  html+=`<div class="sf-div"></div><div class="sf-item${fpNotesFolder==='libre'?' act':''}" onclick="setFpFolder('libre')"><svg viewBox="0 0 14 14" fill="none" stroke="#7C3AED" stroke-width="1.5"><rect x="1" y="1" width="12" height="12" rx="1.5"/><path d="M4 4h6M4 7h6M4 10h4"/></svg>Notes libres<span class="sf-count">${Object.values(notes).filter(n=>n.libre).length}</span></div>`;
-  sb.innerHTML=html;
-}
-function setFpFolder(id){fpNotesFolder=id;renderFpNotesSb();renderFpNotes();}
-function renderFpNotes(){
-  const tc=document.getElementById('fpNotesContent');
-  let items=Object.entries(notes).map(([id,n])=>({id,...n}));
-  if(fpNotesFolder!=='all')items=fpNotesFolder==='libre'?items.filter(n=>n.libre):items.filter(n=>n.type===fpNotesFolder);
-  const sortV=document.getElementById('fpNoteSortSel')?.value||'date_desc';
-  if(sortV==='date_desc')items.sort((a,b)=>new Date(b.ts)-new Date(a.ts));
-  else if(sortV==='date_asc')items.sort((a,b)=>new Date(a.ts)-new Date(b.ts));
-  else if(sortV==='alpha')items.sort((a,b)=>(a.title||a.eventTitle||'').localeCompare(b.title||b.eventTitle||''));
-  else items.sort((a,b)=>(a.treated?1:0)-(b.treated?1:0)||new Date(b.ts)-new Date(a.ts));
-  if(!items.length){tc.innerHTML='<div class="no-files">Aucune note</div>';return;}
-  tc.innerHTML=`<div class="file-grid">${items.map(n=>{
-    const cat=catById(n.type);
-    const typeBadge=n.type?`<span class="fc-badge" style="background:${cat?.color+'22'||'#F1F5F9'};color:${cat?.color||'#475569'}">${esc(cat?.name||n.type)}</span>`:'';
-    const agBadge=n.agence?`<span class="fc-badge ${n.agence==='lemans'?'bg-lemans':'bg-niort'}">${n.agence==='lemans'?'Le Mans':'Niort'}</span>`:'';
-    const dateStr=new Date(n.ts).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
-    const onClick=n.libre?`openFreeModal('${n.id}')`:`openModal('${n.id}')`;
-    return`<div class="file-card${n.treated?' treated':''}" onclick="${onClick}">
-      <div class="fc-top"><svg class="fc-icon" viewBox="0 0 16 16" fill="none" stroke="${n.libre?'#7C3AED':'var(--blue)'}" stroke-width="1.5"><rect x="1" y="1" width="14" height="14" rx="2"/><path d="M4 5h8M4 8h8M4 11h5"/></svg>
-      <div class="fc-badges">${typeBadge}${agBadge}</div></div>
-      <div class="fc-title">${esc(n.title||n.eventTitle||'—')}</div>
-      ${n.eventTitle&&!n.libre?`<div class="fc-sub">${esc(n.eventTitle)}</div>`:''}
-      ${n.text?`<div class="fc-preview">${esc(n.text)}</div>`:''}
-      <div class="fc-footer"><span class="fc-date">${dateStr}</span>${n.treated?'<span class="fc-treated"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 5l3 3L9 2"/></svg>Traitée</span>':''}</div>
-    </div>`;}).join('')}</div>`;
-}
-
-// ── EVT + NOTE QUICK MODAL ──
-function openEvtNoteModal(){
-  document.getElementById('enEvtDate').value=todayStr();
-  document.getElementById('enEvtName').value='';
-  document.getElementById('enEvtStart').value='';
-  document.getElementById('enEvtEnd').value='';
-  document.getElementById('enEvtOrg').value='';
-  document.getElementById('enNoteText').value='';
-  document.getElementById('evtNoteModal').classList.add('open');
-  setTimeout(()=>document.getElementById('enEvtName').focus(),200);
-}
-function closeEvtNoteModal(){document.getElementById('evtNoteModal').classList.remove('open');}
-document.getElementById('evtNoteModal').addEventListener('click',function(e){if(e.target===this)closeEvtNoteModal();});
-async function saveEvtNote(){
-  const name=document.getElementById('enEvtName').value.trim();
-  if(!name){document.getElementById('enEvtName').focus();return;}
-  const evtDate=document.getElementById('enEvtDate').value||todayStr();
-  const evtStart=document.getElementById('enEvtStart').value;
-  const evtEnd=document.getElementById('enEvtEnd').value;
-  const evtOrg=document.getElementById('enEvtOrg').value;
-  const noteText=document.getElementById('enNoteText').value;
-  const id='en_'+Date.now().toString(36);
-  // Parse times
-  const sh=evtStart?parseInt(evtStart.split(':')[0]):0;
-  const sm=evtStart?parseInt(evtStart.split(':')[1]):0;
-  const eh=evtEnd?parseInt(evtEnd.split(':')[0]):0;
-  const em=evtEnd?parseInt(evtEnd.split(':')[1]):0;
-  // Save event to Supabase
-  const evt={id,title:name,org:evtOrg,event_date:evtDate,sh,sm,eh,em,color:'#2563EB'};
-  await sbUE(evt);
-  // Add to local EVENTS array
-  const[y,mo,dy]=evtDate.split('-').map(Number);
-  EVENTS.push({id,title:name,org:evtOrg,date:new Date(y,mo-1,dy),event_date:evtDate,sh,sm,eh,em,color:'#2563EB',loc:'',att:[]});
-  // Save note if any text
-  if(noteText){
-    const nd={title:name,type:'',agence:'',subcat:'',html:`<p>${esc(noteText)}</p>`,text:noteText,files:[],treated:false,libre:false,eventTitle:name,eventDate:evtDate,evtStart,evtEnd,evtOrg,ts:new Date().toISOString()};
-    notes[id]=nd;
-    await sbUN(id,nd);
-  }
-  closeEvtNoteModal();
-  renderCalendar();renderTree();renderCalTodayTodos();
-  if(noteText)openModal(id);
-}
+function handleIcs(inp){if(inp.files[0])document.getElementById('icsStatus').textContent=`✓ "${inp.files[0].name}" reçu.`;}
 
 // ── INIT ──
 loadAll();
 </script>
-
-<!-- FULLSCREEN CAL PANEL -->
-<div class="fullscreen-panel" id="fpCal">
-  <div class="fp-hd">
-    <div class="fp-hd-title">
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="12" height="11" rx="1.5"/><path d="M1 5.5h12M4.5 1v2M9.5 1v2"/></svg>
-      Calendrier — Vue détaillée
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <div class="cal-view-toggle">
-        <button class="cvt on" id="fpBtnWeek" onclick="fpSetCalView('week')">Semaine</button>
-        <button class="cvt" id="fpBtnDay" onclick="fpSetCalView('day')">Jour</button>
-      </div>
-      <button style="font-size:10px;padding:3px 7px;border-radius:6px;border:1px solid rgba(255,255,255,.4);background:transparent;cursor:pointer;font-family:inherit;color:#fff" onclick="fpGoToday()">Auj.</button>
-      <button style="width:26px;height:26px;border-radius:5px;border:1px solid rgba(255,255,255,.4);background:transparent;cursor:pointer;font-size:13px;color:#fff;display:flex;align-items:center;justify-content:center" onclick="fpCalPrev()">‹</button>
-      <button style="width:26px;height:26px;border-radius:5px;border:1px solid rgba(255,255,255,.4);background:transparent;cursor:pointer;font-size:13px;color:#fff;display:flex;align-items:center;justify-content:center" onclick="fpCalNext()">›</button>
-      <button class="fp-close" onclick="closeFullscreen('cal')">✕ Fermer</button>
-    </div>
-  </div>
-  <div class="fp-body" style="display:grid;grid-template-columns:1fr 320px">
-    <!-- Cal main -->
-    <div style="display:flex;flex-direction:column;border-right:1px solid var(--border)">
-      <div id="fpCalBody" style="flex:1;overflow:hidden;display:flex;flex-direction:column"></div>
-    </div>
-    <!-- Side: today todos -->
-    <div style="display:flex;flex-direction:column;padding:16px;overflow-y:auto">
-      <div style="font-size:12px;font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:6px">
-        <svg viewBox="0 0 14 14" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M1 3h12M1 7h8M1 11h6"/></svg>
-        Tâches du jour
-      </div>
-      <div id="fpTodayTodos"></div>
-      <div style="margin-top:16px;font-size:12px;font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:6px">
-        <svg viewBox="0 0 14 14" fill="none" stroke="var(--blue)" stroke-width="1.5"><rect x="1" y="1" width="12" height="12" rx="2"/><path d="M4 4h6M4 7h6M4 10h4"/></svg>
-        Notes du jour
-      </div>
-      <div id="fpTodayNotes"></div>
-    </div>
-  </div>
-</div>
-
-<!-- FULLSCREEN TODO PANEL -->
-<div class="fullscreen-panel" id="fpTodo">
-  <div class="fp-hd">
-    <div class="fp-hd-title">
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3h12M1 7h8M1 11h6"/><circle cx="12" cy="11" r="2"/></svg>
-      Ma ToDo — Vue détaillée
-    </div>
-    <button class="fp-close" onclick="closeFullscreen('todo')">✕ Fermer</button>
-  </div>
-  <div class="fp-body" style="padding:20px;overflow-y:auto">
-    <div style="max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
-      <!-- Add form -->
-      <div class="card" style="flex-shrink:0">
-        <div class="card-hd"><div class="card-hd-title">Ajouter une tâche</div></div>
-        <div class="todo-add-row">
-          <div class="todo-input-wrap" style="flex:1">
-            <input class="todo-ti" id="fpTodoTi" placeholder="Nouvelle tâche…" onkeydown="if(event.key==='Enter')fpAddTodo()">
-            <input class="todo-date-input" type="date" id="fpTodoDt">
-          </div>
-          <button class="urgent-pill" id="fpUrgPill" onclick="fpToggleUrg()">
-            <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5.5" cy="5.5" r="4.5"/><path d="M5.5 3v2.5M5.5 8v.5"/></svg>
-            Urgent
-          </button>
-          <button class="add-btn" onclick="fpAddTodo()">+</button>
-        </div>
-      </div>
-      <!-- Full todo list -->
-      <div class="card" style="flex-shrink:0">
-        <div class="todo-tabs">
-          <button class="todo-tab on" onclick="fpSetTodoTab('todo',this)">À faire</button>
-          <button class="todo-tab" onclick="fpSetTodoTab('done',this)">Fait</button>
-        </div>
-        <div id="fpTodoList"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- FULLSCREEN NOTES PANEL -->
-<div class="fullscreen-panel" id="fpNotes">
-  <div class="fp-hd">
-    <div class="fp-hd-title">
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3a1 1 0 011-1h3l2 2h5a1 1 0 011 1v6a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/></svg>
-      Mes notes — Vue détaillée
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <select id="fpNoteSortSel" onchange="renderFpNotes()" style="font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff;font-family:inherit;outline:none">
-        <option value="date_desc">Date récente ↓</option>
-        <option value="date_asc">Date ancienne ↑</option>
-        <option value="alpha">A → Z</option>
-        <option value="treated">Non traitées en premier</option>
-      </select>
-      <button class="fp-close" onclick="closeFullscreen('notes')">✕ Fermer</button>
-    </div>
-  </div>
-  <div class="fp-body" style="display:grid;grid-template-columns:220px 1fr;overflow:hidden">
-    <div style="border-right:1px solid var(--border);overflow-y:auto;padding:8px 0" id="fpNotesSb"></div>
-    <div style="overflow-y:auto;padding:16px" id="fpNotesContent"></div>
-  </div>
-</div>
-
-<!-- EVT + NOTE QUICK MODAL -->
-<div class="evt-note-modal" id="evtNoteModal">
-  <div class="evt-note-inner">
-    <div class="evt-note-hd">
-      <span style="font-size:13px;font-weight:500">Nouvel événement + Note</span>
-      <button class="modal-close" onclick="closeEvtNoteModal()">✕</button>
-    </div>
-    <div class="evt-note-body">
-      <div class="evt-field-row">
-        <div class="evt-field-lbl">Nom de l'événement</div>
-        <input class="evt-field-inp" id="enEvtName" placeholder="Ex: Réunion client, Entretien…">
-      </div>
-      <div class="evt-times-row">
-        <div class="evt-field-row">
-          <div class="evt-field-lbl">Date</div>
-          <input class="evt-field-inp" type="date" id="enEvtDate">
-        </div>
-        <div class="evt-field-row">
-          <div class="evt-field-lbl">Heure début</div>
-          <input class="evt-field-inp" type="time" id="enEvtStart">
-        </div>
-      </div>
-      <div class="evt-times-row">
-        <div class="evt-field-row">
-          <div class="evt-field-lbl">Heure fin</div>
-          <input class="evt-field-inp" type="time" id="enEvtEnd">
-        </div>
-        <div class="evt-field-row">
-          <div class="evt-field-lbl">Organisateur</div>
-          <input class="evt-field-inp" id="enEvtOrg" placeholder="Optionnel">
-        </div>
-      </div>
-      <div class="evt-field-row">
-        <div class="evt-field-lbl">Note associée (optionnelle)</div>
-        <textarea class="evt-field-inp" id="enNoteText" rows="3" placeholder="Premières notes, contexte…" style="resize:vertical"></textarea>
-      </div>
-    </div>
-    <div class="evt-note-footer">
-      <button class="btn-save" onclick="saveEvtNote()">Créer l'événement + Note</button>
-      <button class="btn-sec" onclick="closeEvtNoteModal()">Annuler</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
