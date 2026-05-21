@@ -238,6 +238,52 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .file-card:hover{border-color:var(--border2);box-shadow:0 1px 6px rgba(0,0,0,.06)}
 .file-card.act{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue-bg)}
 .file-card.treated{opacity:.5;background:#FAFAFA}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── EXPAND / FULLSCREEN PANELS ── */
+.section-title-btn{cursor:pointer;display:flex;align-items:center;gap:6px;transition:color .15s}
+.section-title-btn:hover{color:var(--blue)}
+.section-title-btn .expand-ic{width:14px;height:14px;color:var(--text3);transition:color .15s;opacity:0}
+.section-title-btn:hover .expand-ic{opacity:1;color:var(--blue)}
+
+.fullscreen-panel{position:fixed;inset:0;background:var(--white);z-index:500;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .18s}
+.fullscreen-panel.open{opacity:1;pointer-events:all}
+.fp-hd{height:50px;background:var(--blue);color:#fff;display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
+.fp-hd-title{font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px;flex:1}
+.fp-close{background:rgba(255,255,255,.2);border:none;cursor:pointer;color:#fff;font-size:13px;padding:5px 12px;border-radius:6px;font-family:inherit;transition:background .1s}
+.fp-close:hover{background:rgba(255,255,255,.35)}
+.fp-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
+
+/* ── CAL TODAY TODOS ── */
+.cal-today-todos{border-top:1px solid var(--border);padding:6px 13px;flex-shrink:0;background:#FAFAFA}
+.cal-today-todos-hd{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;display:flex;align-items:center;gap:5px}
+.cal-today-todos-hd svg{width:11px;height:11px}
+.cal-todo-chip{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:10px;color:var(--text2)}
+.cal-todo-chip.urg{color:var(--red);font-weight:500}
+.cal-todo-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);flex-shrink:0}
+.cal-todo-dot.urg{background:var(--red)}
+.cal-todo-dot.done{background:var(--green)}
+.no-cal-todos{font-size:10px;color:var(--text3);font-style:italic}
+
+/* ── NEW EVENT+NOTE BUTTON ── */
+.cal-new-evt-btn{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;border:1px solid var(--blue);background:var(--blue-bg);cursor:pointer;font-family:inherit;font-size:11px;color:var(--blue);transition:all .1s;white-space:nowrap}
+.cal-new-evt-btn:hover{background:var(--blue);color:#fff}
+.cal-new-evt-btn svg{width:12px;height:12px}
+
+/* ── EVT+NOTE QUICK MODAL ── */
+.evt-note-modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.evt-note-modal.open{opacity:1;pointer-events:all}
+.evt-note-inner{background:var(--white);border-radius:var(--radius);width:100%;max-width:520px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25);transform:translateY(8px);transition:transform .2s}
+.evt-note-modal.open .evt-note-inner{transform:translateY(0)}
+.evt-note-hd{background:var(--blue);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.evt-note-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.evt-field-row{display:flex;flex-direction:column;gap:3px}
+.evt-field-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.evt-field-inp{padding:6px 9px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:11px;color:var(--text);outline:none;transition:border-color .1s;width:100%}
+.evt-field-inp:focus{border-color:var(--blue)}
+.evt-times-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.evt-note-footer{display:flex;gap:8px;padding:10px 16px;border-top:1px solid var(--border)}
+
 @keyframes fadeIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
 .fc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px}
 .fc-icon{width:16px;height:16px}
@@ -253,8 +299,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .no-files{padding:20px;font-size:11px;color:var(--text3);text-align:center;line-height:1.6}
 
 /* badge colors */
-.spin{width:22px;height:22px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+.bg-client{background:#DCFCE7;color:#166534}
 .bg-candidat{background:#DBEAFE;color:#1D4ED8}
 .bg-mgmt{background:#F3E8FF;color:#7E22CE}
 .bg-agence{background:#FEF9C3;color:#854D0E}
@@ -321,15 +366,20 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
     <!-- CALENDRIER -->
     <div class="card" style="max-height:320px">
       <div class="card-hd">
-        <div class="card-hd-title" style="color:var(--text)">
+        <div class="card-hd-title section-title-btn" onclick="openFullscreen('cal')" title="Vue détaillée" style="color:var(--text)">
           <svg viewBox="0 0 14 14" fill="none" stroke="var(--blue)" stroke-width="1.5"><rect x="1" y="2" width="12" height="11" rx="1.5"/><path d="M1 5.5h12M4.5 1v2M9.5 1v2"/></svg>
           <span id="calLabel">—</span>
+          <svg class="expand-ic" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 9V13h4M13 5V1H9M1 1l5 5M13 13l-5-5"/></svg>
         </div>
         <div style="display:flex;gap:6px;align-items:center">
           <div class="cal-view-toggle">
             <button class="cvt on" id="btnWeek" onclick="setCalView('week')">Semaine</button>
             <button class="cvt" id="btnDay" onclick="setCalView('day')">Jour</button>
           </div>
+          <button class="cal-new-evt-btn" onclick="openEvtNoteModal()">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 1v12M1 7h12"/></svg>
+            Évén. + Note
+          </button>
           <button style="font-size:10px;padding:3px 7px;border-radius:6px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-family:inherit;color:var(--text2)" onclick="goToday()">Auj.</button>
           <button style="width:22px;height:22px;border-radius:4px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-size:12px;color:var(--text2);display:flex;align-items:center;justify-content:center" onclick="calPrev()">‹</button>
           <button style="width:22px;height:22px;border-radius:4px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-size:12px;color:var(--text2);display:flex;align-items:center;justify-content:center" onclick="calNext()">›</button>
@@ -337,14 +387,16 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
       </div>
       <div id="calBody" style="display:flex;flex-direction:column;flex:1;overflow:hidden"></div>
       <div class="cal-hint">Cliquer sur un événement pour ouvrir la note</div>
+      <div class="cal-today-todos" id="calTodayTodos"></div>
     </div>
 
     <!-- TODO -->
     <div class="card" style="max-height:320px">
       <div class="card-hd">
-        <div class="card-hd-title">
+        <div class="card-hd-title section-title-btn" onclick="openFullscreen('todo')" title="Vue détaillée">
           <svg viewBox="0 0 14 14" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M1 3h12M1 7h8M1 11h6"/><circle cx="12" cy="11" r="2"/><path d="M12 9.5V11"/></svg>
           Ma ToDo
+          <svg class="expand-ic" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 9V13h4M13 5V1H9M1 1l5 5M13 13l-5-5"/></svg>
         </div>
         <span id="urgBadge" style="display:none;font-size:9px;background:var(--red-light);color:var(--red);padding:2px 7px;border-radius:10px;font-weight:500"></span>
       </div>
@@ -377,9 +429,10 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
     <div class="tree-card card">
       <div class="tree-hd">
         <div class="tree-hd-left">
-          <div class="tree-hd-title">
+          <div class="tree-hd-title section-title-btn" onclick="openFullscreen('notes')" title="Vue détaillée">
             <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3a1 1 0 011-1h3l2 2h5a1 1 0 011 1v6a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/></svg>
             Mes notes
+            <svg class="expand-ic" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 9V13h4M13 5V1H9M1 1l5 5M13 13l-5-5"/></svg>
           </div>
           <div class="search-wrap">
             <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="4.5"/><path d="M9.5 9.5L13 13"/></svg>
@@ -388,6 +441,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
           </div>
         </div>
         <div class="tree-actions">
+          <select id="noteSortSel" onchange="renderTree()" style="font-size:10px;padding:3px 8px;border:1px solid var(--border2);border-radius:6px;background:transparent;font-family:inherit;color:var(--text2);outline:none;cursor:pointer"><option value="date_desc">Date récente ↓</option><option value="date_asc">Date ancienne ↑</option><option value="alpha">A → Z</option><option value="treated">Non traitées en premier</option></select>
           <button class="tree-btn primary" onclick="newFreeNote()">
             <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="11" height="11" rx="1.5"/><path d="M4 6.5h5M6.5 4v5"/></svg>
             Note libre
@@ -528,23 +582,14 @@ const DAYS=['lun','mar','mer','jeu','ven','sam','dim'];
 const MS=['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
 const ECOLORS=['#2563EB','#16A34A','#DC2626','#7C3AED','#CA8A04','#0891B2','#DB2777'];
 
-function mkEvt(dOff,sh,sm,eh,em,title,org,ci,loc,att){
-  const d=new Date(Y,Mo,D+dOff);
-  return{id:Math.random().toString(36).slice(2,8),title,org,date:d,sh,sm,eh,em,color:ECOLORS[ci%ECOLORS.length],loc:loc||'',att:att||[]};
+// Events loaded from Supabase
+let EVENTS=[];
+function evtDateObj(e){
+  // e.event_date is 'YYYY-MM-DD'
+  if(!e.event_date)return new Date();
+  const[y,m,d]=e.event_date.split('-').map(Number);
+  return new Date(y,m-1,d);
 }
-const EVENTS=[
-  mkEvt(0,9,0,10,0,'Réunion équipe produit','Sarah Martin',0,'Salle Ibis',['Sarah M.','Paul D.','Julie R.','Vous']),
-  mkEvt(0,14,0,15,0,'Entretien candidat','RH',2,'Bureau RH',['Sophie K.','Vous']),
-  mkEvt(1,10,0,11,0,'Point client Renault','Thomas Bernard',1,'Teams',['Thomas B.','Vous']),
-  mkEvt(1,16,0,17,0,'Revue budget annuel','CFO',2,'Salle direction',['CFO','Managers','Vous']),
-  mkEvt(2,11,0,11,30,'1:1 avec Marie','Marie Laurent',3,'Bureau 4B',['Marie L.','Vous']),
-  mkEvt(2,15,0,16,30,'Sprint review Q2','Paul Dupont',4,'Grande salle',['Paul D.','Sophie K.','Julie R.','Vous']),
-  mkEvt(3,10,0,11,0,'Call investisseurs','CEO',0,'Zoom',['CEO','CFO','Vous']),
-  mkEvt(4,9,0,12,0,'Workshop design','Julie Roux',5,'Salle créa',['Julie R.','Équipe design']),
-  mkEvt(4,12,30,14,0,'Déjeuner équipe','Sophie König',1,'Le Provençal',['Toute l\'équipe']),
-  mkEvt(-1,10,0,11,0,'Réunion stratégie','DG',0,'Salle direction',['DG','Managers']),
-  mkEvt(-2,14,30,15,30,'Entretien Thomas R.','RH',2,'Bureau RH',['Thomas R.','Vous']),
-];
 
 // Base categories (immutable) + custom (editable)
 const BASE_CATS=[
@@ -555,120 +600,57 @@ const BASE_CATS=[
   {id:'autres',  name:'Autres',     color:'#475569', subcats:[]},
 ];
 
-// ── SUPABASE ──
-const SB_URL = 'https://rahnchvmfbyztxeoairy.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhaG5jaHZtZmJ5enR4ZW9haXJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwOTQ1NzcsImV4cCI6MjA5MTY3MDU3N30.FG74EHYWnB7-CxOq5Nd9wGf6wT909RPcjf9W-ZWTa_A';
-const USER_ID = 'pierre'; // identifiant fixe, à remplacer par auth plus tard
 
-async function sbFetch(path, opts={}){
-  const res = await fetch(SB_URL+'/rest/v1/'+path, {
-    headers: {
-      'apikey': SB_KEY,
-      'Authorization': 'Bearer '+SB_KEY,
-      'Content-Type': 'application/json',
-      'Prefer': opts.prefer || '',
-      ...opts.headers
-    },
-    ...opts
-  });
-  if(!res.ok){ console.error('Supabase error', res.status, await res.text()); return null; }
-  const txt = await res.text();
-  return txt ? JSON.parse(txt) : null;
+const SB_URL='https://rahnchvmfbyztxeoairy.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhaG5jaHZtZmJ5enR4ZW9haXJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwOTQ1NzcsImV4cCI6MjA5MTY3MDU3N30.FG74EHYWnB7-CxOq5Nd9wGf6wT909RPcjf9W-ZWTa_A';
+const UID='pierre';
+async function sbF(path,opts={}){
+  try{const r=await fetch(SB_URL+'/rest/v1/'+path,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':opts.prefer||'',...(opts.headers||{})},body:opts.body,method:opts.method||'GET'});
+  if(!r.ok){console.warn('SB',r.status);return null;}const t=await r.text();return t?JSON.parse(t):null;}
+  catch(e){console.error(e);return null;}}
+async function sbUN(id,d){await sbF('agenda_notes?on_conflict=id',{method:'POST',prefer:'resolution=merge-duplicates',body:JSON.stringify({id,user_id:UID,title:d.title,type:d.type,agence:d.agence,subcat:d.subcat,html:d.html,text_content:d.text,files:d.files,treated:d.treated,libre:d.libre,event_title:d.eventTitle||'',event_date:d.eventDate||null,evt_start:d.evtStart||null,evt_end:d.evtEnd||null,evt_org:d.evtOrg||'',ts:d.ts})});}
+async function sbDN(id){await sbF(`agenda_notes?id=eq.${id}`,{method:'DELETE'});}
+async function sbUT(t){await sbF('agenda_todos?on_conflict=id',{method:'POST',prefer:'resolution=merge-duplicates',body:JSON.stringify({id:t.id,user_id:UID,text:t.text,urgent:t.urgent,done:t.done,due_date:t.dueDate||null})});}
+async function sbDT(id){await sbF(`agenda_todos?id=eq.${id}`,{method:'DELETE'});}
+async function sbUC(c){await sbF('agenda_categories?on_conflict=id',{method:'POST',prefer:'resolution=merge-duplicates',body:JSON.stringify({id:c.id,user_id:UID,name:c.name,color:c.color,subcats:c.subcats})});}
+async function sbDC(id){await sbF(`agenda_categories?id=eq.${id}`,{method:'DELETE'});}
+async function sbUE(e){await sbF('agenda_events?on_conflict=id',{method:'POST',prefer:'resolution=merge-duplicates',body:JSON.stringify({id:e.id,user_id:UID,title:e.title,org:e.org||'',event_date:e.event_date,sh:e.sh,sm:e.sm,eh:e.eh,em:e.em,color:e.color||'#2563EB'})});}
+async function sbDE(id){await sbF(`agenda_events?id=eq.${id}`,{method:'DELETE'});}
+function showLoader(on){let l=document.getElementById('ldr');if(!l){l=document.createElement('div');l.id='ldr';l.style.cssText='position:fixed;inset:0;background:rgba(242,242,240,.85);display:flex;align-items:center;justify-content:center;z-index:999;font-size:12px;color:#616160;flex-direction:column;gap:8px';l.innerHTML='<div style="width:22px;height:22px;border:2px solid #C4C4C0;border-top-color:#2563EB;border-radius:50%;animation:spin .7s linear infinite"></div>Chargement…';document.body.appendChild(l);}l.style.display=on?'flex':'none';}
+async function loadAll(){
+  showLoader(true);
+  const[nD,tD,cD,eD]=await Promise.all([
+    sbF(`agenda_notes?user_id=eq.${UID}&order=ts.desc&select=id,title,type,agence,subcat,html,text_content,files,treated,libre,event_title,event_date,evt_start,evt_end,evt_org,ts`),
+    sbF(`agenda_todos?user_id=eq.${UID}&order=created_at.desc`),
+    sbF(`agenda_categories?user_id=eq.${UID}`),
+    sbF(`agenda_events?user_id=eq.${UID}&order=event_date.asc`)
+  ]);
+  if(nD)notes=Object.fromEntries(nD.map(n=>[n.id,{title:n.title,type:n.type,agence:n.agence||'',subcat:n.subcat||'',html:n.html||'',text:n.text_content||'',files:n.files||[],treated:!!n.treated,libre:!!n.libre,eventTitle:n.event_title||'',eventDate:n.event_date||'',evtStart:n.evt_start||'',evtEnd:n.evt_end||'',evtOrg:n.evt_org||'',ts:n.ts||new Date().toISOString()}]));
+  if(tD)todos=tD.map(t=>({id:t.id,text:t.text,urgent:t.urgent,done:t.done,dueDate:t.due_date}));
+  if(cD)customCats=cD.map(c=>({id:c.id,name:c.name,color:c.color,subcats:c.subcats||[]}));
+  if(eD)EVENTS=eD.map(e=>({
+    id:e.id,title:e.title,org:e.org||'',
+    date:evtDateObj(e),
+    event_date:e.event_date,
+    sh:e.sh||0,sm:e.sm||0,eh:e.eh||0,em:e.em||0,
+    color:e.color||'#2563EB',loc:'',att:[]
+  }));
+  showLoader(false);renderCalendar();renderTodo();renderTree();renderCalTodayTodos();
 }
-
-// ── STATE ──
-let notes     = {};
-let todos     = [];
-let customCats= [];
+let notes={},todos=[],customCats=[];
 
 let weekOff=0, selDay=new Date(Y,Mo,D), calView='week';
 let curEvtId=null, curType='', curAgence='', curSubcat='', curFiles=[], curTreated=false;
 let todoTab='todo', urgNew=false, plannedOpen=false;
 let treeFolder='all', searchQ='';
 
-// ── LOAD FROM SUPABASE ──
-async function loadAll(){
-  showLoader(true);
-  try {
-    // Notes
-    const nData = await sbFetch(`agenda_notes?user_id=eq.${USER_ID}&order=ts.desc`);
-    if(nData) notes = Object.fromEntries(nData.map(n=>([n.id, {
-      title:n.title, type:n.type, agence:n.agence, subcat:n.subcat,
-      html:n.html, text:n.text_content, files:n.files||[],
-      treated:n.treated, libre:n.libre,
-      eventTitle:n.event_title, eventDate:n.event_date, ts:n.ts
-    }])));
-
-    // Todos
-    const tData = await sbFetch(`agenda_todos?user_id=eq.${USER_ID}&order=created_at.desc`);
-    if(tData) todos = tData.map(t=>({
-      id:t.id, text:t.text, urgent:t.urgent, done:t.done, dueDate:t.due_date
-    }));
-
-    // Categories
-    const cData = await sbFetch(`agenda_categories?user_id=eq.${USER_ID}`);
-    if(cData) customCats = cData.map(c=>({
-      id:c.id, name:c.name, color:c.color, subcats:c.subcats||[]
-    }));
-  } catch(e){ console.error('Load error', e); }
-  showLoader(false);
-  renderCalendar(); renderTodo(); renderTree();
-}
-
-function showLoader(on){
-  let el=document.getElementById('globalLoader');
-  if(!el){ el=document.createElement('div'); el.id='globalLoader';
-    el.style.cssText='position:fixed;inset:0;background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;z-index:999;font-size:13px;color:#616160';
-    el.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div class="spin"></div>Chargement…</div>';
-    document.body.appendChild(el);
-  }
-  el.style.display=on?'flex':'none';
-}
-
-// ── SAVE TO SUPABASE ──
-async function saveNote_sb(id, data){
-  await sbFetch('agenda_notes?on_conflict=id', {
-    method:'POST',
-    prefer:'resolution=merge-duplicates',
-    body: JSON.stringify({
-      id, user_id:USER_ID,
-      title:data.title, type:data.type, agence:data.agence, subcat:data.subcat,
-      html:data.html, text_content:data.text, files:data.files,
-      treated:data.treated, libre:data.libre,
-      event_title:data.eventTitle, event_date:data.eventDate||null,
-      ts:data.ts
-    })
-  });
-}
-async function deleteNote_sb(id){
-  await sbFetch(`agenda_notes?id=eq.${id}`, {method:'DELETE'});
-}
-async function saveTodo_sb(t){
-  await sbFetch('agenda_todos?on_conflict=id', {
-    method:'POST',
-    prefer:'resolution=merge-duplicates',
-    body: JSON.stringify({
-      id:t.id, user_id:USER_ID, text:t.text,
-      urgent:t.urgent, done:t.done, due_date:t.dueDate||null
-    })
-  });
-}
-async function deleteTodo_sb(id){
-  await sbFetch(`agenda_todos?id=eq.${id}`, {method:'DELETE'});
-}
-async function saveCat_sb(c){
-  await sbFetch('agenda_categories?on_conflict=id', {
-    method:'POST',
-    prefer:'resolution=merge-duplicates',
-    body: JSON.stringify({id:c.id, user_id:USER_ID, name:c.name, color:c.color, subcats:c.subcats})
-  });
-}
-async function deleteCat_sb(id){
-  await sbFetch(`agenda_categories?id=eq.${id}`, {method:'DELETE'});
-}
+function saveLS(){} // data saved to Supabase individually
 function ft(h,m){return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');}
 function sd(a,b){return a&&b&&a.toDateString()===b.toDateString();}
-function evtsFor(d){return EVENTS.filter(e=>sd(e.date,d));}
+function evtsFor(d){
+  const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  return EVENTS.filter(e=>e.event_date===ds||sd(e.date,d));
+}
 function getEvt(id){return EVENTS.find(e=>e.id===id);}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function todayStr(){return NOW.toISOString().split('T')[0];}
@@ -753,9 +735,9 @@ function renderDayView(){
     return`<div class="day-slot">
       <div class="slot-time">${ft(h,0)}</div>
       <div class="slot-body">${slotEvts.map(e=>`
-        <div class="slot-evt${notes[e.id]?' has-note':''}" onclick="openModal('${e.id}')">
-          <div class="slot-evt-name">${esc(e.title)}</div>
-          <div class="slot-evt-time">${ft(e.sh,e.sm)}–${ft(e.eh,e.em)} · ${esc(e.org)}</div>
+        <div class="slot-evt${notes[e.id]?' has-note':''}" style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div style="flex:1;cursor:pointer" onclick="openModal('${e.id}')"><div class="slot-evt-name">${esc(e.title)}</div><div class="slot-evt-time">${ft(e.sh,e.sm)}–${ft(e.eh,e.em)} · ${esc(e.org)}</div></div>
+          <button onclick="event.stopPropagation();deleteEvent('${e.id}')" style="background:transparent;border:none;cursor:pointer;color:rgba(37,99,235,.4);font-size:14px;padding:0 2px;line-height:1;flex-shrink:0" onmouseenter="this.style.color='var(--red)'" onmouseleave="this.style.color='rgba(37,99,235,.4)'" title="Supprimer">×</button>
         </div>`).join('')}
       </div>
     </div>`;
@@ -766,10 +748,19 @@ function renderDayView(){
 function evtRowHtml(e){
   const n=notes[e.id];
   const flags=[];if(n?.type)flags.push(n.type);if(n?.agence)flags.push(n.agence==='lemans'?'Le Mans':'Niort');
-  return`<div class="evt-row${e.id===curEvtId?' active':''}" onclick="openModal('${e.id}')">
-    <div class="evt-col" style="background:${e.color}"></div>
-    <div><div class="evt-name">${esc(e.title)}</div><div class="evt-meta">${ft(e.sh,e.sm)} – ${ft(e.eh,e.em)} · ${esc(e.org)}</div>${flags.length?`<div class="evt-flag">📝 ${flags.join(' · ')}</div>`:''}</div>
+  return`<div class="evt-row${e.id===curEvtId?' active':''}" style="position:relative">
+    <div class="evt-col" style="background:${e.color}" onclick="openModal('${e.id}')"></div>
+    <div style="flex:1;cursor:pointer" onclick="openModal('${e.id}')"><div class="evt-name">${esc(e.title)}</div><div class="evt-meta">${ft(e.sh,e.sm)} – ${ft(e.eh,e.em)}${e.org?' · '+esc(e.org):''}</div>${flags.length?`<div class="evt-flag">📝 ${flags.join(' · ')}</div>`:''}</div>
+    <button onclick="event.stopPropagation();deleteEvent('${e.id}')" style="background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:2px 6px;opacity:0;transition:opacity .1s;flex-shrink:0" onmouseenter="this.style.opacity=1;this.style.color='var(--red)'" onmouseleave="this.style.opacity=0;this.style.color='var(--text3)'" title="Supprimer cet événement">×</button>
   </div>`;
+}
+async function deleteEvent(id){
+  if(!confirm('Supprimer cet événement ? La note associée sera aussi supprimée.'))return;
+  EVENTS=EVENTS.filter(e=>e.id!==id);
+  await sbDE(id);
+  if(notes[id]){delete notes[id];await sbDN(id);}
+  if(curEvtId===id)closeModal();
+  renderCalendar();renderTree();renderCalTodayTodos();
 }
 
 // ── TODO ──
@@ -843,12 +834,11 @@ async function addTodo(){
   todos.unshift(t);
   document.getElementById('todoTi').value='';document.getElementById('todoDt').value=todayStr();
   urgNew=false;document.getElementById('urgPill').classList.remove('on');
-  renderTodo();
-  await saveTodo_sb(t);
+  renderTodo();renderCalTodayTodos();sbUT(t);
 }
 function toggleUrg(){urgNew=!urgNew;document.getElementById('urgPill').classList.toggle('on',urgNew);}
-async function toggleDone(id){const t=todos.find(x=>x.id===id);if(t){t.done=!t.done;renderTodo();await saveTodo_sb(t);}}
-async function delTodo(id){todos=todos.filter(x=>x.id!==id);renderTodo();await deleteTodo_sb(id);}
+async function toggleDone(id){const t=todos.find(x=>x.id===id);if(t){t.done=!t.done;renderTodo();renderCalTodayTodos();await sbUT(t);}}
+async function delTodo(id){todos=todos.filter(x=>x.id!==id);renderTodo();renderCalTodayTodos();await sbDT(id);}
 function setTodoTab(t,btn){todoTab=t;document.querySelectorAll('.todo-tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderTodo();}
 function togglePlanned(){
   plannedOpen=!plannedOpen;
@@ -965,16 +955,15 @@ async function saveNote(){
   const evt=getEvt(curEvtId);
   const html=document.getElementById('noteEditor').innerHTML.trim();
   const title=document.getElementById('mTitle').value.trim();
-  const data={
+  notes[curEvtId]={
     title:title||(evt?.title||'Note libre'),type:curType,agence:curAgence,subcat:curSubcat,html,
     text:document.getElementById('noteEditor').innerText.trim(),
     files:[...curFiles],treated:curTreated,
     eventTitle:evt?.title||'',eventDate:evt?.date?.toISOString()||'',
     libre:!evt,ts:new Date().toISOString()
   };
-  notes[curEvtId]=data;
   const btn=document.getElementById('mSaveBtn');btn.textContent='Enregistrement…';
-  await saveNote_sb(curEvtId, data);
+  await sbUN(curEvtId, notes[curEvtId]);
   btn.textContent='✓ Sauvegardé';btn.classList.add('saved');
   setTimeout(()=>{btn.textContent='Enregistrer';btn.classList.remove('saved');},2000);
   renderCalendar();renderTree();
@@ -982,9 +971,7 @@ async function saveNote(){
 async function deleteNote(){
   if(!curEvtId)return;
   if(!confirm('Supprimer cette note ?'))return;
-  delete notes[curEvtId];
-  await deleteNote_sb(curEvtId);
-  closeModal();
+  delete notes[curEvtId];await sbDN(curEvtId);closeModal();
 }
 function renderDetail(evt){
   document.getElementById('mDetailContent').innerHTML=`
@@ -1088,7 +1075,11 @@ function renderTree(){
       titleLabel=`<div class="tc-hd"><div class="tc-title">${esc(folderName)} — ${items.length} note${items.length!==1?'s':''}</div></div>`;
     }
   }
-  items=items.sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+  const sortV=document.getElementById('noteSortSel')?.value||'date_desc';
+  if(sortV==='date_desc')items=items.sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+  else if(sortV==='date_asc')items=items.sort((a,b)=>new Date(a.ts)-new Date(b.ts));
+  else if(sortV==='alpha')items=items.sort((a,b)=>(a.title||a.eventTitle||'').localeCompare(b.title||b.eventTitle||''));
+  else if(sortV==='treated')items=items.sort((a,b)=>(a.treated?1:0)-(b.treated?1:0)||new Date(b.ts)-new Date(a.ts));
   tc.innerHTML=titleLabel;
   if(!items.length){tc.innerHTML+=`<div class="no-files">${searchQ?'Aucun résultat':'Aucune note'}<br><small>Cliquez sur un événement ou "Note libre" pour créer une note</small></div>`;return;}
   tc.innerHTML+=`<div class="file-grid">${items.map(n=>{
@@ -1119,6 +1110,7 @@ function renderTree(){
 }
 function selectFolder(id){treeFolder=id;renderTree();}
 function newFreeNote(){openFreeModal(null);}
+async function deleteFreeNote(){if(!freeSel||!confirm('Supprimer cette note ?'))return;delete notes[freeSel];await sbDN(freeSel);document.getElementById('freeEditor').style.display='none';freeSel=null;renderTree();}
 
 // ── SETTINGS ──
 function openSettings(){renderCatBlocks();document.getElementById('settingsModal').classList.add('open');}
@@ -1154,34 +1146,29 @@ async function addCat(){
   const v=document.getElementById('newCatInput').value.trim();if(!v)return;
   const hues=[210,270,330,30,150,60,180,300];
   const color=`hsl(${hues[customCats.length%hues.length]},60%,40%)`;
-  const c={id:'c_'+Date.now().toString(36),name:v,color,subcats:[]};
-  customCats.push(c);
+  customCats.push({id:'c_'+Date.now().toString(36),name:v,color,subcats:[]});
   document.getElementById('newCatInput').value='';
-  renderCatBlocks();renderTree();
-  await saveCat_sb(c);
+  await sbUC(customCats[customCats.length-1]);renderCatBlocks();renderTree();
 }
-async function delCat(id){
-  customCats=customCats.filter(c=>c.id!==id);
-  renderCatBlocks();renderTree();
-  await deleteCat_sb(id);
-}
-async function addSubcat(catId){
+async function delCat(id){customCats=customCats.filter(c=>c.id!==id);renderCatBlocks();renderTree();await sbDC(id);}
+function addSubcat(catId){
   const input=document.getElementById('sub_'+catId);
   const v=input.value.trim();if(!v)return;
   const cat=customCats.find(c=>c.id===catId)||BASE_CATS.find(c=>c.id===catId);
   if(cat){if(!cat.subcats)cat.subcats=[];cat.subcats.push(v);}
   if(!customCats.find(c=>c.id===catId)){
+    // base cat — store subcat modification
     let bc=customCats.find(c=>c.id==='_base_'+catId);
     if(!bc){bc={id:'_base_'+catId,_baseRef:catId,subcats:[]};customCats.push(bc);}
     if(!bc.subcats)bc.subcats=[];bc.subcats.push(v);
+    // also update BASE_CATS subcats in memory
     const b=BASE_CATS.find(c=>c.id===catId);if(b){if(!b.subcats)b.subcats=[];b.subcats.push(v);}
-    await saveCat_sb(bc);
-  } else { await saveCat_sb(cat); }
+  }
   input.value='';renderCatBlocks();
 }
-async function delSubcat(catId,idx){
+function delSubcat(catId,idx){
   const cat=customCats.find(c=>c.id===catId);
-  if(cat){cat.subcats.splice(idx,1);await saveCat_sb(cat);}
+  if(cat){cat.subcats.splice(idx,1);}
   else{const b=BASE_CATS.find(c=>c.id===catId);if(b)b.subcats.splice(idx,1);}
   renderCatBlocks();renderTree();
 }
@@ -1189,8 +1176,339 @@ function handleIcs(input){
   if(input.files[0])document.getElementById('icsStatus').textContent=`✓ "${input.files[0].name}" importé. Les vrais événements Outlook s'afficheront ici dans la version connectée.`;
 }
 
+
+// ── TODAY TODOS IN CALENDAR ──
+function renderCalTodayTodos(){
+  const today=todayStr();
+  const el=document.getElementById('calTodayTodos');
+  const todayTodos=todos.filter(t=>!t.done&&(!t.dueDate||t.dueDate===today));
+  const urgTodos=todayTodos.filter(t=>t.urgent);
+  const normTodos=todayTodos.filter(t=>!t.urgent);
+  if(!todayTodos.length){el.innerHTML='';return;}
+  el.innerHTML=`<div class="cal-today-todos-hd"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3h12M1 7h8M1 11h6"/></svg>Tâches du jour (${todayTodos.length})</div>`+
+    [...urgTodos,...normTodos].map(t=>`<div class="cal-todo-chip${t.urgent?' urg':''}">
+      <div class="cal-todo-dot${t.urgent?' urg':''}"></div>${esc(t.text)}
+    </div>`).join('');
+}
+
+// ── FULLSCREEN PANELS ──
+let fpCalView='week',fpWeekOff=0,fpSelDay=new Date(Y,Mo,D),fpTodoTab='todo',fpUrgNew=false,fpNotesFolder='all';
+
+function openFullscreen(section){
+  document.getElementById('fp'+section.charAt(0).toUpperCase()+section.slice(1)).classList.add('open');
+  if(section==='cal'){fpCalView=calView;fpWeekOff=weekOff;fpSelDay=selDay;fpRenderCal();}
+  if(section==='todo'){document.getElementById('fpTodoDt').value=todayStr();fpRenderTodo();}
+  if(section==='notes'){renderFpNotesSb();renderFpNotes();}
+}
+function closeFullscreen(section){
+  document.getElementById('fp'+section.charAt(0).toUpperCase()+section.slice(1)).classList.remove('open');
+}
+
+// ── FP CALENDAR ──
+function fpSetCalView(v){fpCalView=v;document.getElementById('fpBtnWeek').classList.toggle('on',v==='week');document.getElementById('fpBtnDay').classList.toggle('on',v==='day');fpRenderCal();}
+function fpCalPrev(){if(fpCalView==='week')fpWeekOff--;else fpSelDay=new Date(fpSelDay.getFullYear(),fpSelDay.getMonth(),fpSelDay.getDate()-1);fpRenderCal();}
+function fpCalNext(){if(fpCalView==='week')fpWeekOff++;else fpSelDay=new Date(fpSelDay.getFullYear(),fpSelDay.getMonth(),fpSelDay.getDate()+1);fpRenderCal();}
+function fpGoToday(){fpWeekOff=0;fpSelDay=new Date(Y,Mo,D);fpRenderCal();}
+function fpRenderCal(){
+  const body=document.getElementById('fpCalBody');
+  if(fpCalView==='week'){
+    const ws=weekStart(fpWeekOff),we=new Date(ws);we.setDate(ws.getDate()+6);
+    const lbl=ws.getMonth()===we.getMonth()?`${ws.getDate()} – ${we.getDate()} ${MS[ws.getMonth()]} ${ws.getFullYear()}`:`${ws.getDate()} ${MS[ws.getMonth()]} – ${we.getDate()} ${MS[we.getMonth()]}`;
+    body.innerHTML='';
+    const hd=document.createElement('div');hd.style.cssText='padding:10px 16px;font-size:13px;font-weight:500;border-bottom:1px solid var(--border);background:var(--blue-bg);color:var(--blue)';hd.textContent=lbl;body.appendChild(hd);
+    const strip=document.createElement('div');strip.className='week-strip';
+    for(let i=0;i<7;i++){
+      const d=new Date(ws);d.setDate(ws.getDate()+i);
+      const evts=evtsFor(d),isT=sd(d,NOW),isSel=sd(d,fpSelDay),isWe=i>=5;
+      const cell=document.createElement('div');
+      cell.className='wday'+(isSel?' sel':'')+(isT&&!isSel?' today':'')+(isWe?' we':'');
+      cell.innerHTML=`<div class="wd-name">${DAYS[i]}</div><div class="wd-num">${d.getDate()}</div><div class="wd-dots">${evts.slice(0,3).map(e=>`<div class="dot${notes[e.id]?' noted':''}"></div>`).join('')}</div>`;
+      if(!isWe)cell.onclick=()=>{fpSelDay=d;fpRenderCal();};
+      strip.appendChild(cell);
+    }
+    body.appendChild(strip);
+    const evts=evtsFor(fpSelDay);
+    const lbl2=document.createElement('div');lbl2.className='evt-day-lbl';
+    lbl2.textContent=fpSelDay.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+' · '+evts.length+' événement'+(evts.length!==1?'s':'');
+    body.appendChild(lbl2);
+    const scroll=document.createElement('div');scroll.className='evt-scroll';
+    scroll.innerHTML=evts.length?evts.map(e=>evtRowHtml(e)).join(''):'<div class="no-evts">Aucun événement ce jour</div>';
+    body.appendChild(scroll);
+  } else {
+    const lbl=fpSelDay.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    body.innerHTML='';
+    const hd=document.createElement('div');hd.style.cssText='padding:8px 13px;border-bottom:1px solid var(--border);font-size:12px;font-weight:500;background:var(--blue-bg);color:var(--blue)';hd.textContent=lbl;body.appendChild(hd);
+    const evts=evtsFor(fpSelDay).sort((a,b)=>a.sh*60+a.sm-(b.sh*60+b.sm));
+    const wrapper=document.createElement('div');wrapper.style.cssText='flex:1;overflow-y:auto';
+    wrapper.innerHTML=Array.from({length:12},(v,i)=>i+8).map(h=>{
+      const slotEvts=evts.filter(e=>e.sh===h);
+      return`<div class="day-slot"><div class="slot-time">${ft(h,0)}</div><div class="slot-body">${slotEvts.map(e=>`<div class="slot-evt${notes[e.id]?' has-note':''}" onclick="openModal('${e.id}')"><div class="slot-evt-name">${esc(e.title)}</div><div class="slot-evt-time">${ft(e.sh,e.sm)}–${ft(e.eh,e.em)} · ${esc(e.org)}</div></div>`).join('')}</div></div>`;
+    }).join('');
+    body.appendChild(wrapper);
+  }
+  // Side panel: today's todos & notes
+  const td=todayStr();
+  const fpTT=document.getElementById('fpTodayTodos');
+  const todayT=todos.filter(t=>!t.done&&(!t.dueDate||t.dueDate===td));
+  fpTT.innerHTML=todayT.length?todayT.map(t=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+    <div class="todo-check${t.urgent?' urg':''}" onclick="toggleDone('${t.id}');fpRenderCal();" style="flex-shrink:0;margin-top:1px"></div>
+    <div><div class="todo-text${t.urgent?' urgent':''}">${esc(t.text)}</div></div>
+  </div>`).join(''):'<div style="font-size:11px;color:var(--text3);font-style:italic">Aucune tâche pour aujourd’hui</div>';
+  const fpTN=document.getElementById('fpTodayNotes');
+  const todayN=Object.entries(notes).filter(([,n])=>n.eventDate&&n.eventDate.startsWith(td)).map(([id,n])=>({id,...n}));
+  fpTN.innerHTML=todayN.length?todayN.map(n=>`<div style="padding:6px;border:1px solid var(--border);border-radius:6px;margin-bottom:6px;cursor:pointer" onclick="openModal('${n.id}')">
+    <div style="font-size:11px;font-weight:500">${esc(n.title||n.eventTitle||'—')}</div>
+    ${n.text?`<div style="font-size:10px;color:var(--text2);margin-top:2px">${esc(n.text.slice(0,60))}${n.text.length>60?'…':''}</div>`:''}
+  </div>`).join(''):'<div style="font-size:11px;color:var(--text3);font-style:italic">Aucune note pour aujourd’hui</div>';
+}
+
+// ── FP TODO ──
+function fpRenderTodo(){
+  const today=todayStr();
+  const list=document.getElementById('fpTodoList');
+  let items=fpTodoTab==='todo'?todos.filter(t=>!t.done):todos.filter(t=>t.done);
+  if(fpTodoTab==='todo'){
+    items.sort((a,b)=>{if(a.urgent!==b.urgent)return a.urgent?-1:1;return(a.dueDate||'9999')>(b.dueDate||'9999')?1:-1;});
+  }
+  list.innerHTML=items.length?items.map(t=>todoItemHtml(t)).join(''):'<div class="todo-empty">Aucune tâche</div>';
+}
+function fpSetTodoTab(t,btn){fpTodoTab=t;document.querySelectorAll('#fpTodo .todo-tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');fpRenderTodo();}
+function fpToggleUrg(){fpUrgNew=!fpUrgNew;document.getElementById('fpUrgPill').classList.toggle('on',fpUrgNew);}
+async function fpAddTodo(){
+  const txt=document.getElementById('fpTodoTi').value.trim();if(!txt)return;
+  const t={id:Date.now().toString(36),text:txt,urgent:fpUrgNew,done:false,dueDate:document.getElementById('fpTodoDt').value||todayStr()};
+  todos.unshift(t);document.getElementById('fpTodoTi').value='';document.getElementById('fpTodoDt').value=todayStr();
+  fpUrgNew=false;document.getElementById('fpUrgPill').classList.remove('on');
+  renderTodo();fpRenderTodo();await sbUT(t);
+}
+
+// ── FP NOTES ──
+function renderFpNotesSb(){
+  const sb=document.getElementById('fpNotesSb');
+  const cats=allCats();
+  let html=`<div class="sf-lbl">Toutes</div><div class="sf-item${fpNotesFolder==='all'?' act':''}" onclick="setFpFolder('all')"><svg viewBox="0 0 14 14" fill="none" stroke="var(--text2)" stroke-width="1.5"><path d="M1 3a1 1 0 011-1h3l2 2h5a1 1 0 011 1v6a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/></svg>Toutes<span class="sf-count">${Object.keys(notes).length}</span></div><div class="sf-lbl">Catégories</div>`;
+  cats.forEach(c=>{const cnt=Object.values(notes).filter(n=>n.type===c.id).length;html+=`<div class="sf-item${fpNotesFolder===c.id?' act':''}" onclick="setFpFolder('${c.id}')"><svg viewBox="0 0 14 14" fill="none" stroke="${c.color}" stroke-width="1.5"><path d="M1 3a1 1 0 011-1h3l2 2h5a1 1 0 011 1v6a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/></svg>${esc(c.name)}<span class="sf-count">${cnt}</span></div>`;});
+  html+=`<div class="sf-div"></div><div class="sf-item${fpNotesFolder==='libre'?' act':''}" onclick="setFpFolder('libre')"><svg viewBox="0 0 14 14" fill="none" stroke="#7C3AED" stroke-width="1.5"><rect x="1" y="1" width="12" height="12" rx="1.5"/><path d="M4 4h6M4 7h6M4 10h4"/></svg>Notes libres<span class="sf-count">${Object.values(notes).filter(n=>n.libre).length}</span></div>`;
+  sb.innerHTML=html;
+}
+function setFpFolder(id){fpNotesFolder=id;renderFpNotesSb();renderFpNotes();}
+function renderFpNotes(){
+  const tc=document.getElementById('fpNotesContent');
+  let items=Object.entries(notes).map(([id,n])=>({id,...n}));
+  if(fpNotesFolder!=='all')items=fpNotesFolder==='libre'?items.filter(n=>n.libre):items.filter(n=>n.type===fpNotesFolder);
+  const sortV=document.getElementById('fpNoteSortSel')?.value||'date_desc';
+  if(sortV==='date_desc')items.sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+  else if(sortV==='date_asc')items.sort((a,b)=>new Date(a.ts)-new Date(b.ts));
+  else if(sortV==='alpha')items.sort((a,b)=>(a.title||a.eventTitle||'').localeCompare(b.title||b.eventTitle||''));
+  else items.sort((a,b)=>(a.treated?1:0)-(b.treated?1:0)||new Date(b.ts)-new Date(a.ts));
+  if(!items.length){tc.innerHTML='<div class="no-files">Aucune note</div>';return;}
+  tc.innerHTML=`<div class="file-grid">${items.map(n=>{
+    const cat=catById(n.type);
+    const typeBadge=n.type?`<span class="fc-badge" style="background:${cat?.color+'22'||'#F1F5F9'};color:${cat?.color||'#475569'}">${esc(cat?.name||n.type)}</span>`:'';
+    const agBadge=n.agence?`<span class="fc-badge ${n.agence==='lemans'?'bg-lemans':'bg-niort'}">${n.agence==='lemans'?'Le Mans':'Niort'}</span>`:'';
+    const dateStr=new Date(n.ts).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
+    const onClick=n.libre?`openFreeModal('${n.id}')`:`openModal('${n.id}')`;
+    return`<div class="file-card${n.treated?' treated':''}" onclick="${onClick}">
+      <div class="fc-top"><svg class="fc-icon" viewBox="0 0 16 16" fill="none" stroke="${n.libre?'#7C3AED':'var(--blue)'}" stroke-width="1.5"><rect x="1" y="1" width="14" height="14" rx="2"/><path d="M4 5h8M4 8h8M4 11h5"/></svg>
+      <div class="fc-badges">${typeBadge}${agBadge}</div></div>
+      <div class="fc-title">${esc(n.title||n.eventTitle||'—')}</div>
+      ${n.eventTitle&&!n.libre?`<div class="fc-sub">${esc(n.eventTitle)}</div>`:''}
+      ${n.text?`<div class="fc-preview">${esc(n.text)}</div>`:''}
+      <div class="fc-footer"><span class="fc-date">${dateStr}</span>${n.treated?'<span class="fc-treated"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 5l3 3L9 2"/></svg>Traitée</span>':''}</div>
+    </div>`;}).join('')}</div>`;
+}
+
+// ── EVT + NOTE QUICK MODAL ──
+function openEvtNoteModal(){
+  document.getElementById('enEvtDate').value=todayStr();
+  document.getElementById('enEvtName').value='';
+  document.getElementById('enEvtStart').value='';
+  document.getElementById('enEvtEnd').value='';
+  document.getElementById('enEvtOrg').value='';
+  document.getElementById('enNoteText').value='';
+  document.getElementById('evtNoteModal').classList.add('open');
+  setTimeout(()=>document.getElementById('enEvtName').focus(),200);
+}
+function closeEvtNoteModal(){document.getElementById('evtNoteModal').classList.remove('open');}
+document.getElementById('evtNoteModal').addEventListener('click',function(e){if(e.target===this)closeEvtNoteModal();});
+async function saveEvtNote(){
+  const name=document.getElementById('enEvtName').value.trim();
+  if(!name){document.getElementById('enEvtName').focus();return;}
+  const evtDate=document.getElementById('enEvtDate').value||todayStr();
+  const evtStart=document.getElementById('enEvtStart').value;
+  const evtEnd=document.getElementById('enEvtEnd').value;
+  const evtOrg=document.getElementById('enEvtOrg').value;
+  const noteText=document.getElementById('enNoteText').value;
+  const id='en_'+Date.now().toString(36);
+  // Parse times
+  const sh=evtStart?parseInt(evtStart.split(':')[0]):0;
+  const sm=evtStart?parseInt(evtStart.split(':')[1]):0;
+  const eh=evtEnd?parseInt(evtEnd.split(':')[0]):0;
+  const em=evtEnd?parseInt(evtEnd.split(':')[1]):0;
+  // Save event to Supabase
+  const evt={id,title:name,org:evtOrg,event_date:evtDate,sh,sm,eh,em,color:'#2563EB'};
+  await sbUE(evt);
+  // Add to local EVENTS array
+  const[y,mo,dy]=evtDate.split('-').map(Number);
+  EVENTS.push({id,title:name,org:evtOrg,date:new Date(y,mo-1,dy),event_date:evtDate,sh,sm,eh,em,color:'#2563EB',loc:'',att:[]});
+  // Save note if any text
+  if(noteText){
+    const nd={title:name,type:'',agence:'',subcat:'',html:`<p>${esc(noteText)}</p>`,text:noteText,files:[],treated:false,libre:false,eventTitle:name,eventDate:evtDate,evtStart,evtEnd,evtOrg,ts:new Date().toISOString()};
+    notes[id]=nd;
+    await sbUN(id,nd);
+  }
+  closeEvtNoteModal();
+  renderCalendar();renderTree();renderCalTodayTodos();
+  if(noteText)openModal(id);
+}
+
 // ── INIT ──
 loadAll();
 </script>
+
+<!-- FULLSCREEN CAL PANEL -->
+<div class="fullscreen-panel" id="fpCal">
+  <div class="fp-hd">
+    <div class="fp-hd-title">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="12" height="11" rx="1.5"/><path d="M1 5.5h12M4.5 1v2M9.5 1v2"/></svg>
+      Calendrier — Vue détaillée
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="cal-view-toggle">
+        <button class="cvt on" id="fpBtnWeek" onclick="fpSetCalView('week')">Semaine</button>
+        <button class="cvt" id="fpBtnDay" onclick="fpSetCalView('day')">Jour</button>
+      </div>
+      <button style="font-size:10px;padding:3px 7px;border-radius:6px;border:1px solid rgba(255,255,255,.4);background:transparent;cursor:pointer;font-family:inherit;color:#fff" onclick="fpGoToday()">Auj.</button>
+      <button style="width:26px;height:26px;border-radius:5px;border:1px solid rgba(255,255,255,.4);background:transparent;cursor:pointer;font-size:13px;color:#fff;display:flex;align-items:center;justify-content:center" onclick="fpCalPrev()">‹</button>
+      <button style="width:26px;height:26px;border-radius:5px;border:1px solid rgba(255,255,255,.4);background:transparent;cursor:pointer;font-size:13px;color:#fff;display:flex;align-items:center;justify-content:center" onclick="fpCalNext()">›</button>
+      <button class="fp-close" onclick="closeFullscreen('cal')">✕ Fermer</button>
+    </div>
+  </div>
+  <div class="fp-body" style="display:grid;grid-template-columns:1fr 320px">
+    <!-- Cal main -->
+    <div style="display:flex;flex-direction:column;border-right:1px solid var(--border)">
+      <div id="fpCalBody" style="flex:1;overflow:hidden;display:flex;flex-direction:column"></div>
+    </div>
+    <!-- Side: today todos -->
+    <div style="display:flex;flex-direction:column;padding:16px;overflow-y:auto">
+      <div style="font-size:12px;font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <svg viewBox="0 0 14 14" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M1 3h12M1 7h8M1 11h6"/></svg>
+        Tâches du jour
+      </div>
+      <div id="fpTodayTodos"></div>
+      <div style="margin-top:16px;font-size:12px;font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+        <svg viewBox="0 0 14 14" fill="none" stroke="var(--blue)" stroke-width="1.5"><rect x="1" y="1" width="12" height="12" rx="2"/><path d="M4 4h6M4 7h6M4 10h4"/></svg>
+        Notes du jour
+      </div>
+      <div id="fpTodayNotes"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FULLSCREEN TODO PANEL -->
+<div class="fullscreen-panel" id="fpTodo">
+  <div class="fp-hd">
+    <div class="fp-hd-title">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3h12M1 7h8M1 11h6"/><circle cx="12" cy="11" r="2"/></svg>
+      Ma ToDo — Vue détaillée
+    </div>
+    <button class="fp-close" onclick="closeFullscreen('todo')">✕ Fermer</button>
+  </div>
+  <div class="fp-body" style="padding:20px;overflow-y:auto">
+    <div style="max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+      <!-- Add form -->
+      <div class="card" style="flex-shrink:0">
+        <div class="card-hd"><div class="card-hd-title">Ajouter une tâche</div></div>
+        <div class="todo-add-row">
+          <div class="todo-input-wrap" style="flex:1">
+            <input class="todo-ti" id="fpTodoTi" placeholder="Nouvelle tâche…" onkeydown="if(event.key==='Enter')fpAddTodo()">
+            <input class="todo-date-input" type="date" id="fpTodoDt">
+          </div>
+          <button class="urgent-pill" id="fpUrgPill" onclick="fpToggleUrg()">
+            <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5.5" cy="5.5" r="4.5"/><path d="M5.5 3v2.5M5.5 8v.5"/></svg>
+            Urgent
+          </button>
+          <button class="add-btn" onclick="fpAddTodo()">+</button>
+        </div>
+      </div>
+      <!-- Full todo list -->
+      <div class="card" style="flex-shrink:0">
+        <div class="todo-tabs">
+          <button class="todo-tab on" onclick="fpSetTodoTab('todo',this)">À faire</button>
+          <button class="todo-tab" onclick="fpSetTodoTab('done',this)">Fait</button>
+        </div>
+        <div id="fpTodoList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FULLSCREEN NOTES PANEL -->
+<div class="fullscreen-panel" id="fpNotes">
+  <div class="fp-hd">
+    <div class="fp-hd-title">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3a1 1 0 011-1h3l2 2h5a1 1 0 011 1v6a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"/></svg>
+      Mes notes — Vue détaillée
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <select id="fpNoteSortSel" onchange="renderFpNotes()" style="font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff;font-family:inherit;outline:none">
+        <option value="date_desc">Date récente ↓</option>
+        <option value="date_asc">Date ancienne ↑</option>
+        <option value="alpha">A → Z</option>
+        <option value="treated">Non traitées en premier</option>
+      </select>
+      <button class="fp-close" onclick="closeFullscreen('notes')">✕ Fermer</button>
+    </div>
+  </div>
+  <div class="fp-body" style="display:grid;grid-template-columns:220px 1fr;overflow:hidden">
+    <div style="border-right:1px solid var(--border);overflow-y:auto;padding:8px 0" id="fpNotesSb"></div>
+    <div style="overflow-y:auto;padding:16px" id="fpNotesContent"></div>
+  </div>
+</div>
+
+<!-- EVT + NOTE QUICK MODAL -->
+<div class="evt-note-modal" id="evtNoteModal">
+  <div class="evt-note-inner">
+    <div class="evt-note-hd">
+      <span style="font-size:13px;font-weight:500">Nouvel événement + Note</span>
+      <button class="modal-close" onclick="closeEvtNoteModal()">✕</button>
+    </div>
+    <div class="evt-note-body">
+      <div class="evt-field-row">
+        <div class="evt-field-lbl">Nom de l'événement</div>
+        <input class="evt-field-inp" id="enEvtName" placeholder="Ex: Réunion client, Entretien…">
+      </div>
+      <div class="evt-times-row">
+        <div class="evt-field-row">
+          <div class="evt-field-lbl">Date</div>
+          <input class="evt-field-inp" type="date" id="enEvtDate">
+        </div>
+        <div class="evt-field-row">
+          <div class="evt-field-lbl">Heure début</div>
+          <input class="evt-field-inp" type="time" id="enEvtStart">
+        </div>
+      </div>
+      <div class="evt-times-row">
+        <div class="evt-field-row">
+          <div class="evt-field-lbl">Heure fin</div>
+          <input class="evt-field-inp" type="time" id="enEvtEnd">
+        </div>
+        <div class="evt-field-row">
+          <div class="evt-field-lbl">Organisateur</div>
+          <input class="evt-field-inp" id="enEvtOrg" placeholder="Optionnel">
+        </div>
+      </div>
+      <div class="evt-field-row">
+        <div class="evt-field-lbl">Note associée (optionnelle)</div>
+        <textarea class="evt-field-inp" id="enNoteText" rows="3" placeholder="Premières notes, contexte…" style="resize:vertical"></textarea>
+      </div>
+    </div>
+    <div class="evt-note-footer">
+      <button class="btn-save" onclick="saveEvtNote()">Créer l'événement + Note</button>
+      <button class="btn-sec" onclick="closeEvtNoteModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
